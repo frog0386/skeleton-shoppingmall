@@ -2,18 +2,19 @@
 	"name": "skeleton",
 	"version": "0.0.1",
 	"scripts": {
-		"dev": "svelte-kit dev",
-		"build": "svelte-kit build",
-		"package": "svelte-kit package",
-		"preview": "svelte-kit preview",
+		"dev": "vite dev",
+		"build": "vite build",
+		"package": "vite package",
+		"preview": "vite preview",
 		"check": "svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --ignore-path .gitignore --check --plugin-search-dir=. . && eslint --ignore-path .gitignore .",
 		"format": "prettier --ignore-path .gitignore --write --plugin-search-dir=. ."
 	},
 	"devDependencies": {
+		"@iconify/svelte": "^2.2.1",
 		"@sveltejs/adapter-auto": "^1.0.0-next.50",
-		"@sveltejs/kit": "^1.0.0-next.348",
+		"@sveltejs/kit": "^1.0.0-next.367",
 		"@typescript-eslint/eslint-plugin": "^5.10.1",
 		"@typescript-eslint/parser": "^5.10.1",
 		"autoprefixer": "^10.4.2",
@@ -29,7 +30,8 @@
 		"svelte-preprocess": "^4.10.1",
 		"tailwindcss": "^3.0.12",
 		"tslib": "^2.3.1",
-		"typescript": "~4.5.4"
+		"typescript": "~4.5.4",
+		"vite": "^2.9.14"
 	},
 	"type": "module",
 	"dependencies": {
@@ -39,7 +41,13 @@
 		"axios": "^0.26.0",
 		"dotenv": "^16.0.0",
 		"feather-icons": "^4.28.0",
+		"image-resize": "^1.2.7",
+		"moment": "^2.29.4",
 		"query-string": "^7.1.1",
+		"sanitize-html": "^2.7.0",
+		"suneditor": "^2.43.14",
+		"svelte-loading-spinners": "^0.1.7",
+		"sveltekit-i18n": "^2.2.2",
 		"uuid": "^8.3.2"
 	}
 }
