@@ -1,6 +1,8 @@
 <script>
-	import Icon from '$lib/Icon.svelte';
+	// import Icon from '$lib/Icon.svelte';
+	import Icon from '@iconify/svelte';
 	import Menu from '$lib/Menu.svelte';
+	import Boxicon from '$lib/Boxicon.svelte';
 </script>
 
 <div
@@ -9,11 +11,11 @@
 	<a href="/">fingr</a>
 	<div class="flex gap-4 items-center text-black">
 		<a href="/search">
-			<Icon icon="search" size={20} />
+			<Icon icon="carbon:search" width="30" />
 		</a>
 
 		<a href="/notifications">
-			<Icon icon="bell" size={20} />
+			<Boxicon />
 		</a>
 	</div>
 </div>
