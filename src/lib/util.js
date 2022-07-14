@@ -22,14 +22,13 @@ export const detectMediaType = (key) => {
 };
 
 export const getProfile = async (user) => {
-	// 로그인을 했는데
 	if (user) {
 		let profile;
-		const { data, error } = await supabase.from('profile').select().eq('user_id', user.id);
+		const { data, error } = await supabase.from('user').select().eq('id', user.id);
 		profile = data[0];
 		if (!error && !profile) {
-			const { data: profiles } = await supabase.from('profile').insert({
-				user_id: user.id,
+			const { data: profiles } = await supabase.from('user').insert({
+				id: user.id,
 				nickname: user.email.split('@')[0],
 				code: getCode()
 			});

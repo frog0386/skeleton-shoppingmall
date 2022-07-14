@@ -1,8 +1,6 @@
 <script>
-	// import Icon from '$lib/Icon.svelte';
-	import Icon from '@iconify/svelte';
+	import Icon from '$lib/Icon.svelte';
 	import Menu from '$lib/Menu.svelte';
-	import Boxicon from '$lib/Boxicon.svelte';
 </script>
 
 <div
@@ -11,16 +9,17 @@
 	<a href="/">fingr</a>
 	<div class="flex gap-4 items-center text-black">
 		<a href="/search">
-			<Icon icon="carbon:search" width="30" />
+			<Icon icon="search" size={24} />
 		</a>
 
 		<a href="/notifications">
-			<Boxicon />
+			<Icon icon="bell" size={24} />
 		</a>
 	</div>
 </div>
 
 <img
+	alt=""
 	class="h-48 w-full object-cover"
 	src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMzQ2NXwwfDF8c2VhcmNofDF8fGZvb2R8ZW58MHx8fHwxNjQ0NzQzODY5&ixlib=rb-1.2.1&q=80&w=1080"
 />
@@ -28,6 +27,7 @@
 <div class="flex overflow-x-auto gap-2 p-4">
 	<div class="text-center w-16">
 		<img
+			alt=""
 			class="w-16 h-16 rounded-full object-cover"
 			src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMzQ2NXwwfDF8c2VhcmNofDMwfHxmb29kfGVufDB8fHx8MTY0NDc0Mzg2OQ&ixlib=rb-1.2.1&q=80&w=1080"
 		/>
@@ -35,6 +35,7 @@
 	</div>
 	<div class="text-center w-16 inline-block">
 		<img
+			alt=""
 			class="w-16 h-16 rounded-full object-cover"
 			src="https://images.unsplash.com/photo-1481070555726-e2fe8357725c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMzQ2NXwwfDF8c2VhcmNofDI4fHxmb29kfGVufDB8fHx8MTY0NDc0Mzg2OQ&ixlib=rb-1.2.1&q=80&w=1080"
 		/>
@@ -43,6 +44,7 @@
 	</div>
 	<div class="text-center w-16 inline-block">
 		<img
+			alt=""
 			class="w-16 h-16 rounded-full object-cover"
 			src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMzQ2NXwwfDF8c2VhcmNofDN8fGZvb2R8ZW58MHx8fHwxNjQ0NzQzODY5&ixlib=rb-1.2.1&q=80&w=1080"
 		/>
@@ -51,6 +53,7 @@
 	</div>
 	<div class="text-center w-16 inline-block">
 		<img
+			alt=""
 			class="w-16 h-16 rounded-full object-cover"
 			src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMzQ2NXwwfDF8c2VhcmNofDE3fHxmb29kfGVufDB8fHx8MTY0NDc0Mzg2OQ&ixlib=rb-1.2.1&q=80&w=1080"
 		/>
@@ -59,6 +62,7 @@
 	</div>
 	<div class="text-center w-16 inline-block">
 		<img
+			alt=""
 			class="w-16 h-16 rounded-full object-cover"
 			src="https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMzQ2NXwwfDF8c2VhcmNofDI0fHxmb29kfGVufDB8fHx8MTY0NDc0Mzg2OQ&ixlib=rb-1.2.1&q=80&w=1080"
 		/>
@@ -66,6 +70,7 @@
 	</div>
 	<div class="text-center w-16 inline-block">
 		<img
+			alt=""
 			class="w-16 h-16 rounded-full object-cover"
 			src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMzQ2NXwwfDF8c2VhcmNofDMwfHxmb29kfGVufDB8fHx8MTY0NDc0Mzg2OQ&ixlib=rb-1.2.1&q=80&w=1080"
 		/>
@@ -98,6 +103,7 @@
 	<div class="mt-2 gap-4 flex overflow-x-auto">
 		<div>
 			<img
+				alt=""
 				class="rounded w-32 h-32 object-cover"
 				src="https://images.unsplash.com/photo-1529042410759-befb1204b468?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMzQ2NXwwfDF8c2VhcmNofDE5fHxmb29kfGVufDB8fHx8MTY0NDc0Mzg2OQ&ixlib=rb-1.2.1&q=80&w=1080"
 			/>
@@ -127,6 +133,7 @@
 		</div>
 		<div class="inline-block">
 			<img
+				alt=""
 				class="rounded w-32 h-32 object-cover"
 				src="https://images.unsplash.com/photo-1529042410759-befb1204b468?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMzQ2NXwwfDF8c2VhcmNofDE5fHxmb29kfGVufDB8fHx8MTY0NDc0Mzg2OQ&ixlib=rb-1.2.1&q=80&w=1080"
 			/>
@@ -156,6 +163,7 @@
 		</div>
 		<div class="inline-block">
 			<img
+				alt=""
 				class="rounded w-32 h-32 object-cover"
 				src="https://images.unsplash.com/photo-1529042410759-befb1204b468?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMzQ2NXwwfDF8c2VhcmNofDE5fHxmb29kfGVufDB8fHx8MTY0NDc0Mzg2OQ&ixlib=rb-1.2.1&q=80&w=1080"
 			/>
@@ -210,6 +218,7 @@
 	<div class="mt-2 gap-4 flex overflow-x-auto">
 		<div>
 			<img
+				alt=""
 				class="rounded w-32 h-32 object-cover"
 				src="https://images.unsplash.com/photo-1529042410759-befb1204b468?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMzQ2NXwwfDF8c2VhcmNofDE5fHxmb29kfGVufDB8fHx8MTY0NDc0Mzg2OQ&ixlib=rb-1.2.1&q=80&w=1080"
 			/>
@@ -239,6 +248,7 @@
 		</div>
 		<div class="inline-block">
 			<img
+				alt=""
 				class="rounded w-32 h-32 object-cover"
 				src="https://images.unsplash.com/photo-1529042410759-befb1204b468?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMzQ2NXwwfDF8c2VhcmNofDE5fHxmb29kfGVufDB8fHx8MTY0NDc0Mzg2OQ&ixlib=rb-1.2.1&q=80&w=1080"
 			/>
@@ -268,6 +278,7 @@
 		</div>
 		<div class="inline-block">
 			<img
+				alt=""
 				class="rounded w-32 h-32 object-cover"
 				src="https://images.unsplash.com/photo-1529042410759-befb1204b468?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMzQ2NXwwfDF8c2VhcmNofDE5fHxmb29kfGVufDB8fHx8MTY0NDc0Mzg2OQ&ixlib=rb-1.2.1&q=80&w=1080"
 			/>
@@ -322,6 +333,7 @@
 	<div class="mt-2 gap-4 flex overflow-x-auto">
 		<div>
 			<img
+				alt=""
 				class="rounded w-32 h-32 object-cover"
 				src="https://images.unsplash.com/photo-1529042410759-befb1204b468?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMzQ2NXwwfDF8c2VhcmNofDE5fHxmb29kfGVufDB8fHx8MTY0NDc0Mzg2OQ&ixlib=rb-1.2.1&q=80&w=1080"
 			/>
@@ -351,6 +363,7 @@
 		</div>
 		<div class="inline-block">
 			<img
+				alt=""
 				class="rounded w-32 h-32 object-cover"
 				src="https://images.unsplash.com/photo-1529042410759-befb1204b468?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMzQ2NXwwfDF8c2VhcmNofDE5fHxmb29kfGVufDB8fHx8MTY0NDc0Mzg2OQ&ixlib=rb-1.2.1&q=80&w=1080"
 			/>
@@ -380,6 +393,7 @@
 		</div>
 		<div class="inline-block">
 			<img
+				alt=""
 				class="rounded w-32 h-32 object-cover"
 				src="https://images.unsplash.com/photo-1529042410759-befb1204b468?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMzQ2NXwwfDF8c2VhcmNofDE5fHxmb29kfGVufDB8fHx8MTY0NDc0Mzg2OQ&ixlib=rb-1.2.1&q=80&w=1080"
 			/>

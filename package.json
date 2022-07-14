@@ -39,7 +39,6 @@
 		"@tailwindcss/forms": "^0.4.0",
 		"@zerodevx/svelte-toast": "^0.6.3",
 		"axios": "^0.26.0",
-		"boxicons": "^2.1.2",
 		"dotenv": "^16.0.0",
 		"feather-icons": "^4.28.0",
 		"image-resize": "^1.2.7",
