@@ -15,9 +15,14 @@
 <Back />
 <div class="flex flex-col h-full">
 	<div class="p-4 flex-1 flex flex-col justify-center items-center">
-		<h2 class="text-blue-500 text-3xl font-extrabold text-center mt-4 mb-14">
-			fingr <br />
-		</h2>
+		<div class="text-center mb-16">
+			<h1 class="text-2xl font-black">새로운 쇼핑몰, 핑거!</h1>
+		
+			<div class="mt-4 text-sm">
+				지금까지 없던 신개념 쇼핑 <br />
+				지금 핑거에서 시작하세요
+			</div>
+		</div>
 		<form
 			on:submit|preventDefault={async () => {
 				const { error } = await supabase.auth.signIn({ email, password });
@@ -32,7 +37,7 @@
 		>
 			<input
 				type="email"
-				class="border-none bg-gray-100 w-full h-12 rounded mt-2 text-sm"
+				class="border-2 border-gray-300 w-full h-12 font-bold rounded mt-2 text-sm placeholder-gray-300"
 				placeholder="이메일"
 				bind:value={email}
 				required
@@ -40,20 +45,20 @@
 
 			<input
 				type="password"
-				class="border-none bg-gray-100 w-full h-12 rounded mt-4 text-sm"
+				class="border-2 border-gray-300 w-full h-12 font-bold rounded mt-4 text-sm placeholder-gray-300"
 				placeholder="비밀번호"
 				bind:value={password}
 				required
 			/>
 
-			<button class="button mt-4"> 로그인 </button>
+			<button class="button mt-4 bg-blue-500 rounded-full text-white font-bold hover:bg-gray-300"> 로그인 </button>
 		</form>
 
 		<div class="text-center mt-2 text-gray-500">
 			<a href="/users/reset_password" class="text-sm mt-2 border-r pr-2 mr-2">비밀번호 찾기</a>
 			<a href="/users/signup" class="mt-2 text-sm">회원가입</a>
 		</div>
-
+		<!---
 		<div class="flex justify-center mt-4 gap-4">
 			<KakaoLogin />
 			<NaverLogin />
@@ -68,6 +73,7 @@
 				<img src="/google.png" alt="" />
 			</button>
 		</div>
+		--->
 	</div>
 	<div class="text-xs p-4 text-gray-500">
 		(주)인썸니아 | 대표이사 이성훈 | 사업자등록번호: 362-81-00644 <br />

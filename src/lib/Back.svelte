@@ -8,7 +8,7 @@
 {#if icon === 'arrow'}
 <button
 	type="button"
-	class="absolute left-4 top-4 "
+	class="absolute left-4 top-4 text-gray-400"
 	on:click={() => {
 		console.log(window.history);
 		return url ? goto(url) : window.history.go(-1);
@@ -19,7 +19,7 @@
 {:else}
 <button
 	type="button"
-	class="absolute left-4 top-4 "
+	class="absolute left-4 top-4 text-gray-400"
 	on:click={() => {
 		console.log(window.history);
 		return url ? goto(url) : window.history.go(-1);

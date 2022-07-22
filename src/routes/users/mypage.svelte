@@ -2,6 +2,7 @@
 	import Menu from '$lib/Menu.svelte';
 	import { supabase } from '$lib/supabase';
 	import { user, profile } from '$lib/stores';
+	import {toastMessage} from '$lib/stores';
 </script>
 
 <div class="flex justify-center items-center h-14 border-b font-bold">마이페이지</div>
@@ -39,9 +40,10 @@
 				await supabase.auth.signOut();
 				$user = null;
 				$profile = null;
+				$toastMessage ='로그아웃 되었습니다.';
 			}}
 			href="/"
-			class="w-full mt-4 rounded border h-10 flex justify-center items-center border-blue-600 text-blue-600 text-sm"
+			class="w-full mt-4 rounded border h-10 flex justify-center items-center border-blue-500 text-blue-600 text-sm"
 			>로그아웃</button
 		>
 		<a
@@ -50,17 +52,23 @@
 			>회원 탈퇴</a
 		>
 	{:else}
-		<div class="text-gray-500 text-sm p-8 text-center">로그인을 해주세요</div>
-		<a
-			href="/users/login"
-			class="mt-8 rounded border h-10 flex justify-center items-center border-blue-600 text-blue-600 text-sm"
-			>로그인</a
-		>
+	<div class = "space-y-4 mt-6">
+		<div class = "space-y-2">
+		<div class="text-gray-500">아직 Fingr 회원이 아니신가요?</div>
+		<div class="text-2xl font-bold">가입하고 특별한 혜택을 누려보세요!</div>
+		</div>
 		<a
 			href="/users/signup"
-			class="mt-4 rounded border h-10 flex justify-center items-center border-blue-600 text-blue-600 text-sm"
-			>회원가입</a
+			class="rounded border-2 h-12 flex justify-center items-center border-gray-500 text-gray-500"
+			>회원가입하기</a
 		>
+		<a
+			href="/users/login"
+			class=" rounded border-2 h-12 flex justify-center items-center border-blue-500 text-white bg-blue-500"
+			>로그인하기</a
+		>
+		
+	</div>
 	{/if}
 </div>
 
