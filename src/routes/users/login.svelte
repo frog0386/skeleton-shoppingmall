@@ -27,10 +27,10 @@
 			on:submit|preventDefault={async () => {
 				const { error } = await supabase.auth.signIn({ email, password });
 				if (error) {
-					$toastMessage = '잘못된 로그인 정보입니다';
+					$toastMessage = '잘못된 로그인 정보입니다.';
 					return;
 				} else {
-					$toastMessage = '로그인 되었습니다';
+					$toastMessage = '로그인 되었습니다.';
 					goto('/');
 				}
 			}}
