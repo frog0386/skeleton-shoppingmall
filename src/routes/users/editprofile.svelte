@@ -43,16 +43,16 @@
 	/>
 	<button
 		on:click={() => {$toastMessage = "인증이 완료되었습니다."}}
-		class="text-center p-2 border border-gray-300 rounded-md h-14 text-sm text-white font-bold flex items-center justify-center bg-blue-500"
+		class="text-center p-2 border border-gray-300 rounded-md h-14 text-sm text-white font-bold flex items-center justify-center bg-blue-500 hover:bg-gray-300"
 	>
 		휴대폰 인증
 	</button>
 </div>
 </div>
 
-<div class="px-4 pb-4 fixed bottom-0 w-full bg-white ">
+<div class="sm:mx-auto sm:max-w-sm px-4 pb-4 fixed bottom-0 w-full bg-white ">
   <button on:click = {saveChange}
-    class="w-full h-12 rounded-full  text-center text-white bg-blue-600 "
+    class="w-full h-12 rounded-full hover:bg-gray-300  text-center text-white bg-blue-600 "
     >저장하기</button
   >
 </div>

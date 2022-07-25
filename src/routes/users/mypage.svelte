@@ -42,7 +42,7 @@ import { onMount } from 'svelte';
 		</div>
 	
 		<a href = "/users/edit" 
-			class="flex items-center justify-center text-sm text-gray-400  border rounded-full h-8 w-20 "
+			class="flex items-center justify-center text-sm text-gray-400  border rounded-full h-8 w-20 hover:bg-blue-500 hover:text-white "
 		>
 			수정하기
 	</a>

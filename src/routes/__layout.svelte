@@ -71,7 +71,7 @@
 			{#if $modal.buttons}
 				<div class = "flex gap-4">
 				{#each $modal.buttons as button}
-					<button on:click={button.onClick} class="button-outline mt-2 text-white {button.message === "logout"? 'bg-blue-500' : 'bg-gray-200'}">
+					<button on:click={button.onClick} class="button-outline mt-2 text-white {button.message === "logout"? 'bg-blue-500 hover:bg-gray-300' : 'bg-gray-200'}">
 						{button.title}
 					</button>
 				{/each}
