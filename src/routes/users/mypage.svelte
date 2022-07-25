@@ -6,13 +6,13 @@
 	import Icon from '$lib/Icon.svelte';
 import { onMount } from 'svelte';
 	let profileImage;
-	let name;
+	let username;
 	let email;
 	onMount(async () => {
 		//let data = await supabase.from('user_info').select().eq('user_id',$profile.id);
 		//profileImage = data.body[0].profileimage;
 		profileImage = $profile.user_info[0].profileimage;
-		name = $profile.name;
+		username = $profile.user_info[0].username;
 		email = $profile.email;
 	});
 </script>
@@ -36,7 +36,7 @@ import { onMount } from 'svelte';
 			</div>
 	
 			<div class="space-y-1">
-				<div class="font-bold text-lg ">{name}</div>
+				<div class="font-bold text-lg ">{username}</div>
 				<div class="text-gray-400 text-xs  ">{email}</div>
 			</div>
 		</div>

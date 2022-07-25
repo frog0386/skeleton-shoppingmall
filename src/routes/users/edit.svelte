@@ -9,6 +9,7 @@ import { goto } from '$app/navigation';
 
   let user_info = $profile.user_info[0];
   let name = $profile.name;
+  let email = $profile.email;
   
 
   let flag_info = false;
@@ -89,7 +90,7 @@ import { goto } from '$app/navigation';
 <div class="px-4 space-y-2 border-t py-6">
   <div class="flex gap-6">
     <div class="text-gray-400 w-14 ">고객명</div>
-    <div class="">홍길동</div>
+    <div class="">{name}</div>
     <a href = "" class="flex flex-1 text-blue-500 justify-end">
       회원정보 수정<svg
         xmlns="http://www.w3.org/2000/svg"
@@ -108,27 +109,27 @@ import { goto } from '$app/navigation';
   </div>
   <div class="flex gap-6">
     <div class="text-gray-400 w-14 ">이메일</div>
-    <div class="">sdvkljnlkq@gmail.com</div>
+    <div class="">{email}</div>
   </div>
   <div class="flex gap-6">
     <div class="text-gray-400 w-14">연락처</div>
-    <div class="">010-1234-5678</div>
+    <div class="">{user_info.phone}</div>
   </div>
 </div>
 {/if}
 
 <div class="p-4 font-bold border-y">배송지 관리</div>
 {#if flag_address === true}
-<a href = "" class="text-gray-400 h-40 flex justify-center items-center space-x-4">
+<a href = "/users/editaddress" class="text-gray-400 h-40 flex justify-center items-center space-x-4">
   <Icon icon = "map" size = {32}/>
   <div class="">주소를 등록해주세요.</div>
 </a>
 {:else}
 <div class="px-4 space-y-2 border-b py-6">
   <div class="flex gap-6">
-    <div class="text-gray-400 w-14 ">수령인</div>
-    <div class="">홍길동</div>
-    <a href = "" class="flex flex-1 text-blue-500 justify-end">
+    <div class="text-gray-400 w-14">우편번호</div>
+    <div class="">{user_info.zipcode}</div>
+    <a href = "/users/editaddress" class="flex flex-1 text-blue-500 justify-end">
       배송지 수정<svg
         xmlns="http://www.w3.org/2000/svg"
         width="24"
@@ -146,12 +147,8 @@ import { goto } from '$app/navigation';
     </a>
   </div>
   <div class="flex gap-6">
-    <div class="text-gray-400 w-14">우편번호</div>
-    <div class="">17780</div>
-  </div>
-  <div class="flex gap-6">
     <div class="text-gray-400 w-14 ">주소</div>
-    <div class="">서울시 서초구 ...</div>
+    <div class="">{user_info.address1 + ' '}{user_info.address2}</div>
   </div>
   
 </div>

@@ -47,6 +47,7 @@
 		"query-string": "^7.1.1",
 		"sanitize-html": "^2.7.0",
 		"suneditor": "^2.43.14",
+		"svelte-daum-postcode": "^0.0.1",
 		"svelte-loading-spinners": "^0.1.7",
 		"sveltekit-i18n": "^2.2.2",
 		"uuid": "^8.3.2",
