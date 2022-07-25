@@ -59,16 +59,11 @@
 				const { error } = await supabase.from('user').update({
 				name:fields.name
 			}).eq('id',user.id);
-				if(error){
-					
-				}
-				else{
-					const {error} = await supabase.from("user_info").insert({user_id:user.id});
-				}
-				}
+				await supabase.from("user_info").insert({user_id:user.id, gender : gender});
 				goto('/');
 			}
 		}
+	}
 	$: invalid = (name) => {
 		if (submitted) {
 			return isInvalid(schema, name, fields);
