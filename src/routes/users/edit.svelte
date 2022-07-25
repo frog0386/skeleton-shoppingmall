@@ -47,7 +47,7 @@ import { goto } from '$app/navigation';
 </script>
 
 <div class="bg-white h-14 px-4 items-center border-b flex">
-  <Back/>
+  <Back url = "/users/mypage"/>
   <div
     class="flex flex-1 justify-center pr-8 font-bold text-base text-gray-800"
   >
