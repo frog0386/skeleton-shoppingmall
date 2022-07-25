@@ -34,6 +34,8 @@
 	};
 
 	$: $user && loadProfile();
+	
+	console.log($profile);
 </script>
 
 <div
@@ -65,13 +67,15 @@
 					<Icon icon="x" size={20} />
 				</button>
 			</h4>
-			<p class="text-gray-500 my-2 text-sm">{$modal.message}</p>
+			<p class="text-gray-500 my-2 text-sm ">{$modal.message}</p>
 			{#if $modal.buttons}
+				<div class = "flex gap-4">
 				{#each $modal.buttons as button}
-					<button on:click={button.onClick} class="button-outline mt-2">
+					<button on:click={button.onClick} class="button-outline mt-2 text-white {button.message === "logout"? 'bg-blue-500' : 'bg-gray-200'}">
 						{button.title}
 					</button>
 				{/each}
+				</div>
 			{/if}
 		</div>
 	</div>

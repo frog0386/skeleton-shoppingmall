@@ -24,8 +24,9 @@ export const detectMediaType = (key) => {
 export const getProfile = async (user) => {
 	if (user) {
 		let profile;
-		const { data, error } = await supabase.from('user').select().eq('id', user.id);
+		const { data, error } = await supabase.from('user').select(`*,user_info(*)`).eq('id', user.id);
 		profile = data[0];
+		/*
 		if (!error && !profile) {
 			const { data: profiles } = await supabase.from('user').insert({
 				id: user.id,
@@ -33,7 +34,7 @@ export const getProfile = async (user) => {
 				code: getCode()
 			});
 			profile = profiles[0];
-		}
+		}*/
 		// console.log('profile', profile);
 		return profile;
 	} else {

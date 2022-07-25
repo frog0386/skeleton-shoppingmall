@@ -6,9 +6,14 @@
 	import Icon from '$lib/Icon.svelte';
 import { onMount } from 'svelte';
 	let profileImage;
+	let name;
+	let email;
 	onMount(async () => {
-		let data = await supabase.from('user_info').select().eq('user_id',$profile.id);
-		profileImage = data.body[0].profileimage;
+		//let data = await supabase.from('user_info').select().eq('user_id',$profile.id);
+		//profileImage = data.body[0].profileimage;
+		profileImage = $profile.user_info[0].profileimage;
+		name = $profile.name;
+		email = $profile.email;
 	});
 </script>
 
@@ -31,12 +36,12 @@ import { onMount } from 'svelte';
 			</div>
 	
 			<div class="space-y-1">
-				<div class="font-bold text-lg ">{$profile.name}</div>
-				<div class="text-gray-400 text-xs  ">{$profile.email}</div>
+				<div class="font-bold text-lg ">{name}</div>
+				<div class="text-gray-400 text-xs  ">{email}</div>
 			</div>
 		</div>
 	
-		<a href = "users/edit" 
+		<a href = "/users/edit" 
 			class="flex items-center justify-center text-sm text-gray-400  border rounded-full h-8 w-20 "
 		>
 			수정하기
