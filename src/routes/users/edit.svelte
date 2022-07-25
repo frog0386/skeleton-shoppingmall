@@ -8,6 +8,7 @@ import { goto } from '$app/navigation';
   import Back from '$lib/Back.svelte' ;
 
   let user_info = $profile.user_info[0];
+  let username = $profile.user_info[0].username;
   let name = $profile.name;
   let email = $profile.email;
   
@@ -72,7 +73,7 @@ import { goto } from '$app/navigation';
       </div>
     </div>
 
-    <div class="font-bold text-lg ml-4">{name}</div>
+    <div class="font-bold text-lg ml-4">{username}</div>
   </div>
 
   <div class=" text-xs text-right  h-8 w-320 ">
@@ -82,7 +83,7 @@ import { goto } from '$app/navigation';
 </div>
 <div class="p-4 font-bold border-y">회원정보</div>
 {#if flag_info === true}
-  <a href = "" class="text-gray-400 h-40 flex justify-center items-center space-x-2">
+  <a href = "/users/editprofile" class="text-gray-400 h-40 flex justify-center items-center space-x-2">
     <Icon icon = "smartphone" size = {32}/>
     <div class="">휴대폰 인증을 진행해주세요.</div>
   </a>
@@ -91,7 +92,7 @@ import { goto } from '$app/navigation';
   <div class="flex gap-6">
     <div class="text-gray-400 w-14 ">고객명</div>
     <div class="">{name}</div>
-    <a href = "" class="flex flex-1 text-blue-500 justify-end">
+    <a href = "/users/editprofile" class="flex flex-1 text-blue-500 justify-end">
       회원정보 수정<svg
         xmlns="http://www.w3.org/2000/svg"
         width="24"
@@ -110,6 +111,10 @@ import { goto } from '$app/navigation';
   <div class="flex gap-6">
     <div class="text-gray-400 w-14 ">이메일</div>
     <div class="">{email}</div>
+  </div>
+  <div class="flex gap-6">
+    <div class="text-gray-400 w-14 ">닉네임</div>
+    <div class="">{username}</div>
   </div>
   <div class="flex gap-6">
     <div class="text-gray-400 w-14">연락처</div>
