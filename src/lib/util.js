@@ -42,7 +42,7 @@ export const getProfile = async (user) => {
 	}
 };
 
-export const getKey = async (file, bucket = 'app') => {
+export const getKey = async (file, bucket = 'profileimage') => {
 	if (!file) return null;
 	const fileExt = file.name.split('.').pop();
 	const fileName = `${uuidv4()}.${fileExt}`;
@@ -70,7 +70,7 @@ export const getImageKey = async (file, bucket = 'app') => {
 	}
 };
 
-export const getUrl = async (key, bucket = 'app') => {
+export const getUrl = async (key, bucket = 'profileimage') => {
 	if (!key) {
 		return '/empty.png';
 	}
