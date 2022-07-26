@@ -164,3 +164,10 @@ export const resize = async (file) => {
 		return null;
 	}
 };
+
+
+export const addComma = (price) => {
+	const result = price.toString()
+  .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+	return result;
+}

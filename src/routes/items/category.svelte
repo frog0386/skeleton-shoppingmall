@@ -8,7 +8,6 @@
   onMount ( async() => {
     let data = await supabase.from('category').select();
     categories = data.body;
-    console.log(categories);
   });
 </script>
 
