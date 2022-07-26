@@ -8,7 +8,7 @@
 	class="fixed sm:mx-auto sm:max-w-sm bottom-0 left-0 right-0 grid grid-cols-5 bg-white border-t h-15"
 >
 	<a
-		href="/items/cetegory"
+		href="/items/category"
 		class="flex flex-col items-center py-2 hover {$page.url.pathname === '/items/category'
 			? 'text-blue-500'
 			: 'text-gray-800'}"
