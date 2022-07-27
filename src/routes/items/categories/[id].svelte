@@ -34,6 +34,7 @@ import {loading} from '$lib/stores';
 
     {#each items as item}
     <div>
+      <a href = "/items/{item.id}/detail">
       <img
         alt = {item.name}
         class="rounded w-full h-44 object-cover"
@@ -42,7 +43,7 @@ import {loading} from '$lib/stores';
       <h3 class="mt-2 font-bold h-14 truncate">{item.name}</h3>
       <div class="text-xs text-gray-400 line-through">{addComma(item.normal_price)} 원</div>
       <div class="text-gray-500 text-sm">{addComma(item.price)} 원</div>
-      
+    </a>
       <div class="text-sm text-gray-500 flex items-center gap-1">
         <span class="text-yellow-300">
           <Icon icon="star" size={16} />
