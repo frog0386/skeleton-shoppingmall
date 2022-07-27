@@ -3,18 +3,16 @@
 	import Menu from '$lib/Menu.svelte';
 	import { onMount } from 'svelte';
 	import { supabase } from '$lib/supabase';
-	import Category from './items/category.svelte';
-	import { array } from 'yup/lib/locale';
+	import { addComma } from '$lib/util';
 
 	let categories = [];
 	let items = [];
 	let itemsCount = [];
-  let itemDataArray = [];
-  let itemFlag = false;
+	let itemDataArray = [];
+	let itemFlag = false;
 	onMount(async () => {
 		let data = await supabase.from('category').select();
 		categories = data.body;
-		console.log(categories);
 		for (let i = 0; i < categories.length; i++) {
 			let count = await supabase
 				.from('item')
@@ -22,33 +20,36 @@
 				.eq('category_id', categories[0].id);
 			itemsCount[i] = count.count;
 		}
-		for(let i=0; i<categories.length; i++){
-      let randomArray = await selectIndex(itemsCount[i]-1,4);
-      console.log(randomArray);
-      for(let j=0; j<4; j++){
-        let itemData = await supabase.from('item').select().eq('category_id',categories[i].id).range(randomArray[j],randomArray[j]);
-        itemDataArray.push(itemData.body[0]);
-      }
-      items.push(itemDataArray);
-      itemDataArray = [];
-    }
-    console.log((items[0])[0].name);
-    itemFlag = true;
-	});
-  async function selectIndex(totalIndex, selectingNumber) {
-			let randomIndexArray = [];
-			for (let i = 0; i < selectingNumber; i++) {
-				//check if there is any duplicate index
-				let randomNum = Math.floor(Math.random() * totalIndex);
-				if (randomIndexArray.indexOf(randomNum) === -1) {
-					randomIndexArray.push(randomNum);
-				} else {
-					//if the randomNum is already in the array retry
-					i--;
-				}
+		for (let i = 0; i < categories.length; i++) {
+			let randomArray = await selectIndex(itemsCount[i] - 1, 4);
+			console.log(randomArray);
+			for (let j = 0; j < 4; j++) {
+				let itemData = await supabase
+					.from('item')
+					.select()
+					.eq('category_id', categories[i].id)
+					.range(randomArray[j], randomArray[j]);
+				itemDataArray.push(itemData.body[0]);
 			}
-			return randomIndexArray;
-		};
+			items.push(itemDataArray);
+			itemDataArray = [];
+		}
+		itemFlag = true;
+	});
+	async function selectIndex(totalIndex, selectingNumber) {
+		let randomIndexArray = [];
+		for (let i = 0; i < selectingNumber; i++) {
+			//check if there is any duplicate index
+			let randomNum = Math.floor(Math.random() * totalIndex);
+			if (randomIndexArray.indexOf(randomNum) === -1) {
+				randomIndexArray.push(randomNum);
+			} else {
+				//if the randomNum is already in the array retry
+				i--;
+			}
+		}
+		return randomIndexArray;
+	}
 </script>
 
 <div class="fixed top-0 z-10 sm:mx-auto sm:max-w-sm left-0 right-0">
@@ -188,32 +189,25 @@
 </div>
 
 {#if itemFlag === true}
-{#each categories as category}
-	<div class="mx-4 flex justify-between items-end bg-white border-t py-4">
-		<div class="text-lg font-black flex">{category.name}</div>
-		<a href="/items/categories/{category.id}" class="text-gray-500  text-sm mr-3">더보기</a>
-	</div>
-	<div>
-		<div class="grid grid-cols-2 gap-4  pb-4 px-4 bg-white">
-      {#each items[category.position-1] as item}
-			<a href="/items/{item.id}/detail" class=" space-y-2">
-				<img
-					class="rounded-md w-40 h-40 object-cover"
-					src={item.image}
-				/>
-				<div class="">{item.name}</div>
-				<div class="flex items-center">
-					<span class=" text-sm font-bold">{item.price}</span>
-					<span class="text-gray-700 text-sm">원</span>
-				</div>
-			</a>
-      {/each}
-			
+	{#each categories as category}
+		<div class="mx-4 flex justify-between items-end bg-white border-t py-4">
+			<div class="text-lg font-black flex">{category.name}</div>
+			<a href="/items/categories/{category.id}" class="text-gray-500  text-sm mr-3">더보기</a>
 		</div>
-	</div>
-{/each}
+		<div>
+			<div class="grid grid-cols-2 gap-2  pb-4 px-4 bg-white">
+				{#each items[category.position - 1] as item}
+					<a href="/items/{item.id}/detail" class=" space-y-2">
+						<img class="rounded-md w-48 h-40 object-cover" src={item.image} />
+						<h3 class="mt-2 font-bold h-20">{item.name}</h3>
+						<div class="text-xs text-gray-400 line-through">{addComma(item.normal_price)} 원</div>
+						<div class="font-bold ">{addComma(item.price)} 원</div>
+					</a>
+				{/each}
+			</div>
+		</div>
+	{/each}
 {/if}
-
 
 <div class="pb-16" />
 <Menu />
