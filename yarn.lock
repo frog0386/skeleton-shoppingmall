@@ -2497,12 +2497,19 @@
     "sorcery" "^0.10.0"
     "strip-indent" "^3.0.0"
 
+"svelte-scrollto@^0.2.0":
+  "integrity" "sha512-l4K2E4jr6dXCODtZDCkpp/TzknVVoq8gecHM0UOOmihvLosczdyLuyDUhZ+U2HkhLWi7nnimuOstZSFKtXSpmA=="
+  "resolved" "https://registry.npmjs.org/svelte-scrollto/-/svelte-scrollto-0.2.0.tgz"
+  "version" "0.2.0"
+  dependencies:
+    "svelte" "3.x"
+
 "svelte-yup@^1.0.5":
   "integrity" "sha512-7PDwqk1cAAnrsWimp63oSvHUp2+YcQtLgyqpOlxMRz6fs4dZbR/f8yzrQuL0cyFkUn6eVGvV6lNkflXqTdHjmQ=="
   "resolved" "https://registry.npmjs.org/svelte-yup/-/svelte-yup-1.0.5.tgz"
   "version" "1.0.5"
 
-"svelte@^3.0.0", "svelte@^3.2.0", "svelte@^3.23.0", "svelte@^3.24.0", "svelte@^3.44.0", "svelte@^3.x", "svelte@>=3.19.0":
+"svelte@^3.0.0", "svelte@^3.2.0", "svelte@^3.23.0", "svelte@^3.24.0", "svelte@^3.44.0", "svelte@^3.x", "svelte@>=3.19.0", "svelte@3.x":
   "integrity" "sha512-qKJzw6DpA33CIa+C/rGp4AUdSfii0DOTCzj/2YpSKKayw5WGSS624Et9L1nU1k2OVRS9vaENQXp2CVZNU+xvIg=="
   "resolved" "https://registry.npmjs.org/svelte/-/svelte-3.46.4.tgz"
   "version" "3.46.4"

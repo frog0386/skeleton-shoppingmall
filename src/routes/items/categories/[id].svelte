@@ -5,24 +5,25 @@
   import { supabase } from '$lib/supabase';
   import Menu from '$lib/Menu.svelte';
   import { page } from '$app/stores';
-import Category from '../category.svelte';
 import { addComma } from '$lib/util';
 import {loading} from '$lib/stores';
-$loading = true;
+
   let items = [];
-  let categoryName;
+  let categoryName = ' ';
   onMount(async() => {
+    $loading = true;
     let data = await supabase.from('item').select('*,category(name)').eq('category_id', $page.params.id);
     items = data.body;
     categoryName = items[0].category.name;
     $loading = false;
   });
+
 </script>
 
-<div class="fixed w-full bg-white h-14 px-4 items-center border-b flex">
+<div class="fixed top-0 sm:mx-auto sm:max-w-sm left-0 right-0 bg-white h-14 justify-center items-center border-b flex">
   <Back icon = "arrow"/>
   <div
-    class="flex flex-1 justify-center pr-8 font-bold text-base text-gray-800"
+    class="flex w-full justify-center  font-bold text-base text-gray-800"
   >
     {categoryName}
   </div>

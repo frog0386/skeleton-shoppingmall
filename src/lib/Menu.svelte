@@ -1,8 +1,9 @@
 <script>
 	import { page } from '$app/stores';
-
 	import Icon from './Icon.svelte';
+	
 </script>
+
 
 <div
 	class="fixed sm:mx-auto sm:max-w-sm bottom-0 left-0 right-0 grid grid-cols-5 bg-white border-t h-15"
@@ -51,4 +52,3 @@
 		<span class="text-xs mt-1 font-bold">내 정보</span>
 	</a>
 </div>
-

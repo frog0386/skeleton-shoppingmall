@@ -22,7 +22,7 @@
 <div class="grid grid-cols-2 gap-4 p-4 text-sm">
 
   {#each categories as category}
-  <a href = "/items/categories/{category.id}" class="text-center ">
+  <a href = "/items/categories/{category.id}?name={category.name}" class="text-center ">
     <div class="py-3 bg-gray-100 rounded-full ">{category.name}</div>
   </a>
 
