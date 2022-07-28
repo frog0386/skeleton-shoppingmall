@@ -51,18 +51,20 @@
 	}
 </script>
 
-<div class="fixed top-0 z-10 sm:mx-auto sm:max-w-sm left-0 right-0">
+<div class="sticky top-0 z-10 sm:mx-auto sm:max-w-sm left-0 right-0">
 	<div class="text-xl px-4 h-14 flex items-center  bg-blue-500 text-white font-black flex-1 ">
 		FINGR
 	</div>
 
+
+</div>
+<div class="sticky top-0 z-20 sm:mx-auto sm:max-w-sm left-0 right-0">
 	<div class="px-4 py-2 bg-blue-500 ">
 		<a href = "/items/search" class="text-gray-400 flex gap-3 items-center bg-white p-2">
 			<Icon icon="search" size={24} />상품 검색
     </a>
 	</div>
 </div>
-<div class="pt-28" />
 <div class="py-4 mx-4  text-lg  font-black">이번 주! TOP10</div>
 
 <div class="px-4 pb-8">
