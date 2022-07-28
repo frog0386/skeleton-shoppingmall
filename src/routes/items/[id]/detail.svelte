@@ -13,12 +13,14 @@
 	let itemPrice = ' ';
 	let itemNormalPrice = ' ';
 	let itemDescription = ' ';
+	let itemBrand = ' ';
 	let likeFlag = false;
 
 	onMount(async () => {
-		let data = await supabase.from('item').select('*').eq('id', $page.params.id);
+		let data = await supabase.from('item').select('*,brand(*)').eq('id', $page.params.id);
 		item = data.body[0];
 		itemName = item.name;
+		itemBrand = item.brand.brandname;
 		itemImage = item.image;
 		itemPrice = item.price;
 		itemNormalPrice = item.normal_price;
@@ -52,7 +54,7 @@
 	class="fixed sm:mx-auto sm:max-w-sm top-0 right-0 left-0 z-10 bg-white h-14 px-4 items-center border-b flex justify-center"
 >
 	<Back icon="arrow" />
-	<div class="flex font-bold text-base px-8 text-gray-800 truncate">
+	<div class="flex font-bold text-base px-8  text-gray-800 truncate">
 		{itemName}
 	</div>
 </div>
@@ -64,7 +66,7 @@
 
 <div class="p-4">
   <div class = "flex">
-	<div class="font-bold flex-1 justify-between items-center">
+	<div class="font-bold text-xl flex-1 justify-between items-center">
 		{itemName}
   </div>
 		{#if user}
@@ -84,6 +86,7 @@
 			</button>
 		{/if}
   </div>
+	<div class="text-gray-400 text-sm font-bold">{itemBrand}</div>
 	<div class="mt-1 flex justify-between">
 		<div>
 			<span class="text-xl font-bold">{addComma(itemPrice)}원</span>

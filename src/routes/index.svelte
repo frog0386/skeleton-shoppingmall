@@ -23,9 +23,10 @@
 			for (let j = 0; j < 4; j++) {
 				let itemData = await supabase
 					.from('item')
-					.select()
+					.select('*,brand(*)')
 					.eq('category_id', categories[i].id)
 					.range(randomArray[j], randomArray[j]);
+				console.log(itemData);
 				itemDataArray.push(itemData.body[0]);
 			}
 			items = [...items,itemDataArray];
@@ -144,6 +145,7 @@
 					<a href="/items/{item.id}/detail" class=" space-y-2">
 						<img class="rounded-md w-48 h-40 object-cover" src={item.image} />
 						<h3 class="mt-2 font-bold h-20">{item.name}</h3>
+						<div class="text-sm font-bold text-gray-400">{item.brand.brandname}</div>
 						<div class="text-xs text-gray-400 line-through">{addComma(item.normal_price)} 원</div>
 						<div class="font-bold ">{addComma(item.price)} 원</div>
 					</a>
