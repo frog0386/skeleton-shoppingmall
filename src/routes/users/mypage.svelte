@@ -8,10 +8,14 @@
 	import { getProfile } from '$lib/util';
 	
 	let userFlag = true;
+	let likeCount ;
 	onMount( async() => {
 		let user = supabase.auth.user();
 		if(!user){
 			userFlag = false;
+		}else{
+			let data = await supabase.from('like').select('*', { count: 'exact', head: true }).eq('user_id', user.id);
+			likeCount = data.count;
 		}
 	})
 </script>
@@ -75,16 +79,18 @@
 				</div>
 			</div>
 
-			<div class="grid grid-cols-3 px-4 py-4 border-b">
-				<button class="w-full space-y-2 py-2"
+			<div class="grid grid-cols-3 px-4 py-6 border-b">
+				<a href="/users/likes" class="w-full space-y-2 py-2"
 					><div class="flex justify-center">
 						<Icon icon="heart" size={24} />
 					</div>
-					<a href="/users/likes" class="flex gap-1 justify-center">
+					<div class="flex gap-1 justify-center">
 						<div class="">찜</div>
-						<div class="font-bold ">0</div>
-					</a>
-				</button>
+						{#if likeCount}
+						<div class="font-bold ">{likeCount}</div>
+						{/if}
+					</div>
+				</a>
 
 				<button class="w-full space-y-2 py-2"
 					><div class="flex justify-center">
