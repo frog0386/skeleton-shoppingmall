@@ -22,7 +22,6 @@
 		}
 		for (let i = 0; i < categories.length; i++) {
 			let randomArray = await selectIndex(itemsCount[i] - 1, 4);
-			console.log(randomArray);
 			for (let j = 0; j < 4; j++) {
 				let itemData = await supabase
 					.from('item')
@@ -58,9 +57,9 @@
 	</div>
 
 	<div class="px-4 py-2 bg-blue-500 ">
-		<div class="text-gray-400 flex gap-3 items-center bg-white p-2">
+		<a href = "/items/search" class="text-gray-400 flex gap-3 items-center bg-white p-2">
 			<Icon icon="search" size={24} />상품 검색
-		</div>
+    </a>
 	</div>
 </div>
 <div class="pt-28" />
