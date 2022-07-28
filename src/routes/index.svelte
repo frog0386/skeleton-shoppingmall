@@ -9,18 +9,16 @@
 	let items = [];
 	let itemsCount = [];
 	let itemDataArray = [];
-	let itemFlag = false;
 	onMount(async () => {
 		let data = await supabase.from('category').select();
 		categories = data.body;
+		console.log(categories);
 		for (let i = 0; i < categories.length; i++) {
 			let count = await supabase
 				.from('item')
 				.select('*', { count: 'exact', head: true })
-				.eq('category_id', categories[0].id);
+				.eq('category_id', categories[i].id);
 			itemsCount[i] = count.count;
-		}
-		for (let i = 0; i < categories.length; i++) {
 			let randomArray = await selectIndex(itemsCount[i] - 1, 4);
 			for (let j = 0; j < 4; j++) {
 				let itemData = await supabase
@@ -30,10 +28,9 @@
 					.range(randomArray[j], randomArray[j]);
 				itemDataArray.push(itemData.body[0]);
 			}
-			items.push(itemDataArray);
+			items = [...items,itemDataArray];
 			itemDataArray = [];
 		}
-		itemFlag = true;
 	});
 	async function selectIndex(totalIndex, selectingNumber) {
 		let randomIndexArray = [];
@@ -65,8 +62,8 @@
     </a>
 	</div>
 </div>
-<div class="py-4 mx-4  text-lg  font-black">이번 주! TOP10</div>
 
+<div class="py-4 mx-4  text-lg  font-black">이번 주! TOP10</div>
 <div class="px-4 pb-8">
 	<div class=" gap-2 flex overflow-x-auto">
 		<a href="/" class=" space-y-2 relative ">
@@ -133,6 +130,30 @@
 	</div>
 </div>
 
+
+
+	{#each categories as category}
+		<div class="mx-4 flex justify-between items-end bg-white border-t py-4">
+			<div class="text-lg font-black flex">{category.name}</div>
+			<a href="/items/categories/{category.id}" class="text-gray-500  text-sm mr-3">더보기</a>
+		</div>
+		<div>
+			{#if items[category.position-1]}
+			<div class="grid grid-cols-2 gap-2  pb-4 px-4 bg-white">
+				{#each items[category.position-1] as item}
+					<a href="/items/{item.id}/detail" class=" space-y-2">
+						<img class="rounded-md w-48 h-40 object-cover" src={item.image} />
+						<h3 class="mt-2 font-bold h-20">{item.name}</h3>
+						<div class="text-xs text-gray-400 line-through">{addComma(item.normal_price)} 원</div>
+						<div class="font-bold ">{addComma(item.price)} 원</div>
+					</a>
+				{/each}
+			</div>
+			{/if}
+		</div>
+	{/each}
+
+
 <div class="py-4 mx-4  text-lg  font-black border-t">최근 본 상품</div>
 
 <div class="px-4 pb-8">
@@ -188,27 +209,6 @@
 		</a>
 	</div>
 </div>
-
-{#if itemFlag === true}
-	{#each categories as category}
-		<div class="mx-4 flex justify-between items-end bg-white border-t py-4">
-			<div class="text-lg font-black flex">{category.name}</div>
-			<a href="/items/categories/{category.id}" class="text-gray-500  text-sm mr-3">더보기</a>
-		</div>
-		<div>
-			<div class="grid grid-cols-2 gap-2  pb-4 px-4 bg-white">
-				{#each items[category.position - 1] as item}
-					<a href="/items/{item.id}/detail" class=" space-y-2">
-						<img class="rounded-md w-48 h-40 object-cover" src={item.image} />
-						<h3 class="mt-2 font-bold h-20">{item.name}</h3>
-						<div class="text-xs text-gray-400 line-through">{addComma(item.normal_price)} 원</div>
-						<div class="font-bold ">{addComma(item.price)} 원</div>
-					</a>
-				{/each}
-			</div>
-		</div>
-	{/each}
-{/if}
 
 <div class="pb-16" />
 <Menu />
