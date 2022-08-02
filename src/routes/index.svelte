@@ -12,7 +12,6 @@
 	onMount(async () => {
 		let data = await supabase.from('category').select();
 		categories = data.body;
-		console.log(categories);
 		for (let i = 0; i < categories.length; i++) {
 			let count = await supabase
 				.from('item')
@@ -26,7 +25,6 @@
 					.select('*,brand(*)')
 					.eq('category_id', categories[i].id)
 					.range(randomArray[j], randomArray[j]);
-				console.log(itemData);
 				itemDataArray.push(itemData.body[0]);
 			}
 			items = [...items,itemDataArray];
