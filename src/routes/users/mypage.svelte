@@ -7,6 +7,11 @@
 	import { onMount } from 'svelte';
 	import { getProfile } from '$lib/util';
 	
+
+	let username = '';
+	let name = '';
+	let email = '';
+	let profileimage;
 	let userFlag = true;
 	let likeCount ;
 	onMount( async() => {
@@ -17,6 +22,11 @@
 			let data = await supabase.from('like').select('*', { count: 'exact', head: true }).eq('user_id', user.id);
 			likeCount = data.count;
 		}
+		console.log($profile);
+		username = $profile.user_info[0].username;
+		email = $profile.email;
+		name = $profile.name;
+		profileimage = $profile.user_info[0].profileimage;
 	})
 </script>
 
@@ -44,8 +54,12 @@
 					</div>
 
 					<div class="space-y-1">
-						<div class="font-bold text-lg ">{$profile.user_info[0].username}</div>
-						<div class="text-gray-400 text-xs  ">{$profile.email}</div>
+						{#if username === null}
+						<div class="font-bold text-lg ">{name}</div>
+						{:else}
+						<div class="font-bold text-lg ">{username}</div>
+						{/if}
+						<div class="text-gray-400 text-xs  ">{email}</div>
 					</div>
 				</div>
 

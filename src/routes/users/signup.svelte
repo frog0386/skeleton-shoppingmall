@@ -56,11 +56,11 @@
 			}
 			else{
 				$toastMessage = '회원가입에 성공하였습니다.'
-				const { error } = await supabase.from('user').update({
+				await supabase.from('user').update({
 				name:fields.name
 			}).eq('id',user.id);
 				await supabase.from("user_info").insert({user_id:user.id, gender : gender});
-				goto('/');
+				goto('/users/login');
 			}
 		}
 	}

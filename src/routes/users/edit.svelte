@@ -170,8 +170,8 @@
 	</a>
 {:else}
 	<div class="px-4 space-y-2 border-b py-6">
-		<div class="flex gap-6">
-			<div class="text-gray-400 w-14">우편번호</div>
+		<div class="flex gap-4">
+			<div class="text-gray-400 w-18">우편번호</div>
 			<div class="">{user_info.zipcode}</div>
 			<a href="/users/editaddress" class="flex flex-1 text-blue-500 justify-end">
 				배송지 수정<svg

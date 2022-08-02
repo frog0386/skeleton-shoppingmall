@@ -38,7 +38,7 @@
 	<input
 		type="text"
 		class="flex-1 h-14 border-gray-300 font-bold rounded-md text-sm placeholder-neutral-400"
-		placeholder="우편번호"
+		placeholder="휴대폰 번호"
 		bind:value={phone}
 	/>
 	<button
