@@ -4,5 +4,6 @@ dotenv.config();
 
 export const admin = createClient(
 	import.meta.env.VITE_PUBLIC_SUPABASE_URL,
-	process.env['SUPABASE_SERVICE_KEY']
+	import.meta.env.VITE_SUPABASE_SERVICE_KEY
 );
+

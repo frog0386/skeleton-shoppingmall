@@ -8,7 +8,9 @@
 	import { addComma } from '$lib/util';
 	import { page } from '$app/stores';
 	import { modal } from '$lib/stores';
+	import axios from 'axios';
 	let item = [];
+	let itemID = '';
 	let itemName = '';
 	let itemImage = ' ';
 	let itemPrice = ' ';
@@ -26,6 +28,7 @@
 	onMount(async () => {
 		let data = await supabase.from('item').select('*,brand(*),option(*)').eq('id', $page.params.id);
 		item = data.body[0];
+		itemID = item.id;
 		itemName = item.name;
 		itemBrand = item.brand.brandname;
 		itemImage = item.image;
@@ -43,6 +46,7 @@
 				likeFlag = true;
 			}
 		}
+
 	});
 
 	onDestroy(async () => {
@@ -68,9 +72,15 @@
 				optionFlag = true;
 			}
 		}
+		let optionID ;
 		if(optionFlag === false){
+			for(let i=0; i<options.length; i++){
+				if(selected === options[i].option){
+					optionID = options[i].id;
+				}
+			}
 			selected = null;
-		selectedItems.push({ option: optionValue, quantity: 1 });
+		selectedItems.push({itemID : itemID, optionID : optionID, price : itemPrice, option: optionValue, quantity: 1 });
 		selectedItems = selectedItems;
 		totalPrice = totalPrice + itemPrice;
 		}
@@ -123,7 +133,7 @@
 		selectedItems = selectedItems;
 	}
 
-	function handleCartClick() {
+	async function handleCartClick() {
 		if(selectedItems.length === 0){
 			$modal = {
 			title: '상품을 선택해주세요.',
@@ -139,9 +149,9 @@
 		};
 		}
 		else{
-
-
-			$modal = {
+			try{
+				const {data} = await axios.post('/apis/cart',{selectedItems,session : supabase.auth.session()});
+				$modal = {
 			title: '장바구니에 추가되었습니다.' +
 			 '장바구니로 이동하시겠습니까?',
 			message: '',
@@ -160,6 +170,10 @@
 				}
 			]
 		};
+			}catch(error){
+				$toastMessage = "장바구니에 추가하던 중 오류가 발생했습니다.";
+				console.log(error);
+			}
 		}
 	}
 </script>
