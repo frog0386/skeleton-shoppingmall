@@ -46,7 +46,6 @@ export async function post({ request }) {
 
 export async function del({request}){
 	const { item, session } = await request.json();
-	console.log(item);
 	let itemId = item.id
 	try{
 		const { data } = await admin.auth.api.getUser(session.access_token);
@@ -55,6 +54,35 @@ export async function del({request}){
 		const cart = await admin.from('order').select().eq('user_id', userId).eq('status', 'cart');
 		userCartID = cart.body[0].id;
 		await admin.from('line_item').delete().eq('order_id',userCartID).eq('id', itemId);
+		return{
+			status:200
+		};
+	}
+	catch(error){
+		return {
+			status: 400
+		};
+	}
+}
+
+export async function patch({request}){
+	const { data, session, action} = await request.json();
+	console.log(data);
+	let itemId = data.id
+	let quantity = data.quantity;
+	console.log(session);
+	try{
+		const { data } = await admin.auth.api.getUser(session.access_token);
+		let userId = data.id;
+		let userCartID;
+		const cart = await admin.from('order').select().eq('user_id', userId).eq('status', 'cart');
+		userCartID = cart.body[0].id;
+		if(action === 'plus'){
+			await admin.from('line_item').update({quantity : quantity + 1}).eq('id',itemId);
+		}
+		else if (action === 'minus'){
+			await admin.from('line_item').update({quantity : quantity - 1}).eq('id',itemId);
+		}
 		return{
 			status:200
 		};

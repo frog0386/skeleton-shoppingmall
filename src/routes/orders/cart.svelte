@@ -58,10 +58,7 @@
     }
 
   async function handleItemRemove(index){
-      console.log(cartItems);
-      let headers = {"Content-Type": "application/json"};
       const response = await axios.delete('/apis/cart',{data:{item : cartItems[index],session : supabase.auth.session()}});
-      console.log(response);
       if(response.status === 200){
         let temp = cartItems.splice(index,1);
       cartItems = cartItems;
@@ -71,6 +68,27 @@
       }
       else{
         $toastMessage = "오류가 발생했습니다";
+      }
+    }
+
+    async function handleAmountIncrease(index){
+      const response = await axios.patch('/apis/cart',{data : cartItems[index],session : supabase.auth.session(), action : "plus"});
+      cartItems[index].quantity +=1;
+      normalPriceSum = sumAllNormalPrice()
+    priceSum = sumAllPrice();
+    salePriceSum = (normalPriceSum*1) - (priceSum*1);
+    }
+
+    async function handleAmountDecrease(index){
+      if(cartItems[index].quantity === 1){
+        $toastMessage = '더이상 줄일 수 없습니다';
+      }
+      else{
+        const response = await axios.patch('/apis/cart',{data : cartItems[index],session : supabase.auth.session(), action : "minus"});
+        cartItems[index].quantity -=1;
+        normalPriceSum = sumAllNormalPrice()
+    priceSum = sumAllPrice();
+    salePriceSum = (normalPriceSum*1) - (priceSum*1);
       }
     }
 </script>
@@ -91,7 +109,7 @@
         <div class="text-xs text-gray-400">{cart.brand}</div>
 				<div class = "font-bold">
 					{cart.item.name}
-					<div class="text-xs text-gray-400 mt-1">{cart.option.option}</div>
+					<div class="text-xs text-gray-400 mt-1">옵션 : {cart.option.option}</div>
 					<div class="flex mt-2 gap-4">
 						<img class="rounded w-24 object-cover" src={cart.item.image} />
 						<div>
@@ -102,7 +120,7 @@
 								</div>
 							</div>
 							<div class="flex w-24 h-10 border rounded text-sm text-gray-500 mt-2">
-								<button class="w-10 h-10 px-2">
+								<button on:click = {() => {handleAmountDecrease(index)}} class="w-10 h-10 px-2">
 									<Icon icon="minus" size={20} />
 								</button>
 								<input
@@ -110,7 +128,7 @@
 									class="border-none w-6 h-9 p-0 text-center"
 									value={cart.quantity}
 								/>
-								<button class="w-10 h-10 px-2">
+								<button on:click = {() => {handleAmountIncrease(index)}} class="w-10 h-10 px-2">
 									<Icon icon="plus" size={20} />
 								</button>
 							</div>
