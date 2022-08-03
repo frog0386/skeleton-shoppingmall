@@ -337,7 +337,8 @@ import { goto } from '$app/navigation';
 				장바구니 담기
 			</button>
 
-			<button
+			<button on:click = {() => {goto('/orders/payment')
+			}}
 				class="block text-center w-full bg-blue-500 rounded-full  h-12 text-sm text-white font-bold flex items-center justify-center"
 			>
 				바로구매
