@@ -3,7 +3,7 @@
 	import Back from '$lib/Back.svelte';
 	import { onDestroy, onMount } from 'svelte';
 	import { supabase } from '$lib/supabase';
-	import { user } from '$lib/stores';
+	import { user, itemData } from '$lib/stores';
 	import { toastMessage } from '$lib/stores';
 	import { addComma } from '$lib/util';
 	import { page } from '$app/stores';
@@ -178,6 +178,16 @@ import { goto } from '$app/navigation';
 			}
 		}
 	}
+
+	async function handleBuyClick() {
+		if(selectedItems.length === 0) {
+			$toastMessage = '상품을 선택해주세요';
+		}
+		else{
+			$itemData = selectedItems;
+			goto("/orders/payment");
+		}
+	}
 </script>
 
 <div
@@ -337,8 +347,7 @@ import { goto } from '$app/navigation';
 				장바구니 담기
 			</button>
 
-			<button on:click = {() => {goto('/orders/payment')
-			}}
+			<button on:click = {handleBuyClick}
 				class="block text-center w-full bg-blue-500 rounded-full  h-12 text-sm text-white font-bold flex items-center justify-center"
 			>
 				바로구매
