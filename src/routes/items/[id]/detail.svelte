@@ -9,6 +9,7 @@
 	import { page } from '$app/stores';
 	import { modal } from '$lib/stores';
 	import axios from 'axios';
+import { goto } from '$app/navigation';
 	let item = [];
 	let itemID = '';
 	let itemName = '';
@@ -160,6 +161,7 @@
 					title: '이동하기',
 					message: 'logout',
 					onClick: async () => {
+						goto('/orders/cart');
 					}
 				},
 				{

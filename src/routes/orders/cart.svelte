@@ -7,12 +7,13 @@
 	import { supabase } from '$lib/supabase';
 	import { addComma } from '$lib/util';
 	import { user } from '$lib/stores';
-import { prevent_default } from 'svelte/internal';
+  import axios from 'axios';
+  import { toastMessage } from '$lib/stores';
 
 	let cartId;
 	let cartItems = [];
-  let normalPriceSum = '';
-  let priceSum = '';
+  let normalPriceSum = 0;
+  let priceSum = 0;
   let salePriceSum=0;
 	onMount(async () => {
 		let data = await supabase.from('order').select().eq('user_id', $user.id).eq('status', 'cart');
@@ -26,11 +27,52 @@ import { prevent_default } from 'svelte/internal';
       let cartItemData = await supabase.from('item').select('*,brand(*)').eq('id', cartItems[i].item_id);
       cartItems[i].brand = cartItemData.body[0].brand.brandname;
     }
-    normalPriceSum = cartItems.map(item => item.item.normal_price).reduce((prev,curr) => prev+curr,0);
-    priceSum = cartItems.map(item => item.item.price).reduce((prev,curr) => prev+curr,0);
+    console.log(cartItems);
+    normalPriceSum = sumAllNormalPrice()
+    priceSum = sumAllPrice();
     salePriceSum = (normalPriceSum*1) - (priceSum*1);
 		
+
 	});
+
+  function sumAllNormalPrice(){
+    if(cartItems.length === 0){
+      return 0;
+    }
+    let sum=0;
+      for(let i=0; i<cartItems.length; i++){
+        sum += cartItems[i].item.normal_price * cartItems[i].quantity;
+      }
+      return sum; 
+    }
+    function sumAllPrice(){
+      if(cartItems.length === 0){
+      return 0;
+    }
+    let sum=0;
+      for(let i=0; i<cartItems.length; i++){
+        sum += cartItems[i].item.price * cartItems[i].quantity;
+        
+      }
+      return sum; 
+    }
+
+  async function handleItemRemove(index){
+      console.log(cartItems);
+      let headers = {"Content-Type": "application/json"};
+      const response = await axios.delete('/apis/cart',{data:{item : cartItems[index],session : supabase.auth.session()}});
+      console.log(response);
+      if(response.status === 200){
+        let temp = cartItems.splice(index,1);
+      cartItems = cartItems;
+      normalPriceSum = sumAllNormalPrice()
+    priceSum = sumAllPrice();
+    salePriceSum = (normalPriceSum*1) - (priceSum*1);
+      }
+      else{
+        $toastMessage = "오류가 발생했습니다";
+      }
+    }
 </script>
 
 <div
@@ -77,7 +119,7 @@ import { prevent_default } from 'svelte/internal';
 				</div>
 			</div>
 		</div>
-		<button class="text-gray-400">
+		<button on:click = {() => {handleItemRemove(index)}} class="text-gray-400">
 			<Icon icon="x" size={24} />
 		</button>
 	</div>
