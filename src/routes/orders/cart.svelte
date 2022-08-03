@@ -6,7 +6,7 @@
 	import { onMount } from 'svelte';
 	import { supabase } from '$lib/supabase';
 	import { addComma } from '$lib/util';
-	import { user, itemData } from '$lib/stores';
+	import { user, cartData } from '$lib/stores';
   import axios from 'axios';
   import { toastMessage } from '$lib/stores';
 
@@ -91,6 +91,16 @@
     salePriceSum = (normalPriceSum*1) - (priceSum*1);
       }
     }
+
+    async function handleBuyClick() {
+      if(cartItems.length === 0){
+        $toastMessage = "장바구니에 상품이 없습니다.";
+      }
+      else{
+        $cartData = cartItems;
+        goto('/orders/payment');
+      }
+    }
 </script>
 
 <div
@@ -161,7 +171,7 @@
     <div class="text-lg font-bold">{addComma((normalPriceSum*1)-(salePriceSum))}원</div>
   </div>
 
-  <button on:click={()=>{}}
+  <button on:click={handleBuyClick}
     class="mt-4 block text-center w-full bg-blue-600 rounded-full h-12 text-white font-bold flex items-center justify-center"
   >
     주문하기
