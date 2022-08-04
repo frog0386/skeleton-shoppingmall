@@ -93,6 +93,7 @@ import { goto } from '$app/navigation';
 			let response = await axios.post('/apis/pay', {data : items, session: supabase.auth.session(), flag : 0 });
       if(response.status === 200){
         $toastMessage = "결제가 완료되었습니다.";
+        goto('/orders/success');
       }
       else{
         $toastMessage = "오류가 발생했습니다.";
@@ -101,6 +102,7 @@ import { goto } from '$app/navigation';
 			let response = await axios.post('/apis/pay', { data : cartList, session: supabase.auth.session(), flag : 1 });
       if(response.status === 200){
         $toastMessage = "결제가 완료되었습니다.";
+        goto('/orders/success');
       }
       else{
         $toastMessage = "오류가 발생했습니다.";
