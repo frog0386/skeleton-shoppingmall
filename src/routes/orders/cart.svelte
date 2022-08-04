@@ -15,6 +15,8 @@
   let normalPriceSum = 0;
   let priceSum = 0;
   let salePriceSum=0;
+  let checkboxValue = [];
+  let temp = [];
 	onMount(async () => {
 		let data = await supabase.from('order').select().eq('user_id', $user.id).eq('status', 'cart');
 		cartId = data.body[0].id;
@@ -27,6 +29,11 @@
       let cartItemData = await supabase.from('item').select('*,brand(*)').eq('id', cartItems[i].item_id);
       cartItems[i].brand = cartItemData.body[0].brand.brandname;
     }
+    for(let i=0; i<cartItems.length; i++){
+      checkboxValue.push(i);
+    }
+    checkboxValue= checkboxValue;
+    console.log(checkboxValue);
     console.log(cartItems);
     normalPriceSum = sumAllNormalPrice()
     priceSum = sumAllPrice();
@@ -40,8 +47,8 @@
       return 0;
     }
     let sum=0;
-      for(let i=0; i<cartItems.length; i++){
-        sum += cartItems[i].item.normal_price * cartItems[i].quantity;
+      for(let i=0; i<checkboxValue.length; i++){
+          sum += cartItems[checkboxValue[i]].item.normal_price * cartItems[checkboxValue[i]].quantity;
       }
       return sum; 
     }
@@ -50,8 +57,9 @@
       return 0;
     }
     let sum=0;
-      for(let i=0; i<cartItems.length; i++){
-        sum += cartItems[i].item.price * cartItems[i].quantity;
+      for(let i=0; i<checkboxValue.length; i++){
+          sum += cartItems[checkboxValue[i]].item.price * cartItems[checkboxValue[i]].quantity;
+
         
       }
       return sum; 
@@ -63,8 +71,8 @@
         let temp = cartItems.splice(index,1);
       cartItems = cartItems;
       normalPriceSum = sumAllNormalPrice()
-    priceSum = sumAllPrice();
-    salePriceSum = (normalPriceSum*1) - (priceSum*1);
+      priceSum = sumAllPrice();
+      salePriceSum = (normalPriceSum*1) - (priceSum*1);
       }
       else{
         $toastMessage = "오류가 발생했습니다";
@@ -93,12 +101,36 @@
     }
 
     async function handleBuyClick() {
+      let temp = [];
       if(cartItems.length === 0){
         $toastMessage = "장바구니에 상품이 없습니다.";
       }
       else{
-        $cartData = cartItems;
+        for(let i=0; i<checkboxValue.length; i++){
+          console.log(checkboxValue);
+          console.log(cartItems);
+          temp.push(cartItems[checkboxValue[i]]);
+        }
+        $cartData = temp;
         goto('/orders/payment');
+      }
+    }
+
+    async function handleCheckboxClick(index){
+      let indexValue = checkboxValue.indexOf(index);
+      if(indexValue !== -1){
+        temp = checkboxValue.splice(indexValue,1);
+        checkboxValue = checkboxValue;
+        normalPriceSum = sumAllNormalPrice()
+    priceSum = sumAllPrice();
+    salePriceSum = (normalPriceSum*1) - (priceSum*1)
+      }
+      else if (indexValue=== -1){
+        checkboxValue.push(index);
+        checkboxValue = checkboxValue;
+        normalPriceSum = sumAllNormalPrice()
+    priceSum = sumAllPrice();
+    salePriceSum = (normalPriceSum*1) - (priceSum*1)
       }
     }
 </script>
@@ -114,7 +146,7 @@
 {#each cartItems as cart, index}
 	<div class="p-4 flex justify-between items-start border-b">
 		<div class="text-sm flex gap-2">
-			<input type="checkbox" class="rounded-full border-gray-400 w-6 h-6" />
+			<input type="checkbox" class="rounded-full border-gray-400 w-6 h-6" bind:group={checkboxValue} value={index} on:click = {() => {handleCheckboxClick(index)}}/>
 			<div class="">
         <div class="text-xs text-gray-400">{cart.brand}</div>
 				<div class = "font-bold">
@@ -152,6 +184,7 @@
 		</button>
 	</div>
 {/each}
+
 
 <div class="p-4">
   <div class="flex justify-between items-center">

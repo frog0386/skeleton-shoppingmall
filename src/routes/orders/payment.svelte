@@ -52,7 +52,7 @@
 	});
 	onDestroy(() => {
 		$itemData = null;
-		$cartData = null;
+		$cartData = [];
 	});
 	function countSailSum_item() {
 		let sailPriceSum = 0;

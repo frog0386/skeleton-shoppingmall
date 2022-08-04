@@ -6,4 +6,4 @@ export const modal = writable(null);
 export const toastMessage = writable(null);
 export const loading = writable(false);
 export const itemData = writable(null);
-export const cartData = writable(null);
+export const cartData = writable([]);
