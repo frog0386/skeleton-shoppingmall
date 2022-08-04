@@ -18,11 +18,13 @@ import { goto } from '$app/navigation';
 	let itemNormalPrice = ' ';
 	let itemDescription = ' ';
 	let itemBrand = ' ';
+	let itemRating;
 	let options = [];
 	let selected;
 	let selectedItems = [];
 	let optionValue;
 	let totalPrice=0;
+	let reviewCount = '';
 	let likeFlag = false;
 	let buyFlag = false;
 
@@ -36,6 +38,10 @@ import { goto } from '$app/navigation';
 		itemPrice = item.price;
 		itemNormalPrice = item.normal_price;
 		itemDescription = item.description;
+		itemRating = item.rating;
+		if(itemRating === null){
+			itemRating = 0;
+		}
 		options = item.option;
 		if (user) {
 			let likeData = await supabase
@@ -47,7 +53,9 @@ import { goto } from '$app/navigation';
 				likeFlag = true;
 			}
 		}
-
+		console.log(item);
+		let count = await supabase.from('review').select('*', { count: 'exact', head: true }).eq('item_id', $page.params.id);
+		reviewCount = count.count;
 	});
 
 	onDestroy(async () => {
@@ -236,7 +244,7 @@ import { goto } from '$app/navigation';
 			<span class="text-yellow-300">
 				<Icon icon="star" size={16} />
 			</span>
-			4.9(2,321)
+			{itemRating}({reviewCount})
 		</div>
 	</div>
 	<!---
@@ -264,7 +272,7 @@ import { goto } from '$app/navigation';
 		{itemDescription}
 	</div>
 
-	<h3 class="font-bold my-4 border-t pt-2">리뷰 1</h3>
+	<h3 class="font-bold my-4 border-t pt-2">리뷰 {reviewCount}</h3>
 
 	<div class="rounded bg-gray-100 p-4 mt-2">
 		<div class="flex items-center gap-2 text-sm ">

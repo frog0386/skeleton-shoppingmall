@@ -53,7 +53,6 @@
 		}
 		reviewedList = reviewedList;
 		unreviewedItemList = unreviewedItemList;
-    console.log(reviewedList);
 	});
 
   onDestroy(async () => {
@@ -71,18 +70,14 @@
 		if (rating === 0) {
 			$toastMessage = '별점을 선택해주세요.';
 		} else {
-			console.log(unreviewedList);
-			console.log(unreviewedItemList);
 			let response = await supabase
 				.from('review')
 				.insert({ item_id: itemId, star: rating, body: body, user_id: $user.id });
+      console.log(response);
 			if (response.status === 201) {
 				let index = unreviewedList.indexOf(itemId);
 				reviewedList.push(unreviewedList.splice(index, 1)[0]);
 				reviewedItemList.push(unreviewedItemList.splice(index, 1)[0]);
-
-				console.log(reviewedItemList);
-				console.log(reviewedList);
 				unreviewedList = unreviewedList;
 				unreviewedItemList = unreviewedItemList;
 				$toastMessage = '리뷰가 작성되었습니다.';
