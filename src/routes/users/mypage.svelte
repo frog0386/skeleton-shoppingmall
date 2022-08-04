@@ -15,6 +15,7 @@
 	let userFlag = true;
 	let likeCount ;
 	let orderCount;
+	let reviewCount;
 	onMount( async() => {
 		let user = supabase.auth.user();
 		if(!user){
@@ -24,6 +25,8 @@
 			likeCount = like.count;
 			let order = await supabase.from('order').select('*', { count: 'exact', head: true }).eq('user_id', user.id).eq('status','paid');
 			orderCount = order.count;
+			let review = await supabase.from('review').select('*', { count: 'exact', head: true }).eq('user_id', user.id);
+			reviewCount = review.count;
 		}
 		console.log($profile);
 		username = $profile.user_info[0].username;
@@ -115,7 +118,9 @@
 					</div>
 					<div class="flex gap-1 justify-center">
 						<div class="">리뷰</div>
-						<div class="font-bold ">0</div>
+						{#if reviewCount}
+						<div class="font-bold ">{reviewCount}</div>
+						{/if}
 					</div>
 				</a>
 
