@@ -14,13 +14,16 @@
 	let profileimage;
 	let userFlag = true;
 	let likeCount ;
+	let orderCount;
 	onMount( async() => {
 		let user = supabase.auth.user();
 		if(!user){
 			userFlag = false;
 		}else{
-			let data = await supabase.from('like').select('*', { count: 'exact', head: true }).eq('user_id', user.id);
-			likeCount = data.count;
+			let like = await supabase.from('like').select('*', { count: 'exact', head: true }).eq('user_id', user.id);
+			likeCount = like.count;
+			let order = await supabase.from('order').select('*', { count: 'exact', head: true }).eq('user_id', user.id).eq('status','paid');
+			orderCount = order.count;
 		}
 		console.log($profile);
 		username = $profile.user_info[0].username;
@@ -116,15 +119,18 @@
 					</div>
 				</button>
 
-				<button class="w-full space-y-2 py-2"
+				<a href = "/orders/list" class="w-full space-y-2 py-2"
 					><div class="flex justify-center">
 						<Icon icon="clipboard" size={24} />
 					</div>
 					<div class="flex gap-1 justify-center">
 						<div class="">주문내역</div>
-						<div class="font-bold ">0</div>
+						{#if orderCount}
+						<div class="font-bold ">{orderCount}</div>
+						{/if}
+					
 					</div>
-				</button>
+				</a>
 			</div>
 
 			<a href="" class="mx-4 my-2 py-3 font-bold flex items-center gap-2 border-b ">

@@ -6,10 +6,12 @@
 	import { itemData, user } from '$lib/stores';
 	import { dateFormat } from '$lib/util';
 	import { addComma } from '$lib/util';
+  import {loading} from '$lib/stores';
 
 	let orderList = [];
 	let loadFlag = false;
 	onMount(async () => {
+    $loading = true;
 		let order = await supabase
 			.from('order')
 			.select('*,line_item(*)')
@@ -35,6 +37,7 @@
 		}
     console.log(orderList);
 		loadFlag = true;
+    $loading = false;
 	});
 </script>
 
