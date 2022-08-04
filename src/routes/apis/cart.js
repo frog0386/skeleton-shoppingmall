@@ -22,7 +22,7 @@ export async function post({ request }) {
 					item_id: selectedItems[i].itemID,
 					option_id: selectedItems[i].optionID,
 					quantity: selectedItems[i].quantity,
-					total_price: selectedItems[i].price * selectedItems[i].quantity
+					price: selectedItems[i].price * selectedItems[i].quantity
 				});
 			} else {
 				let quantity = duplicateCheck.body[0].quantity + selectedItems[i].quantity;

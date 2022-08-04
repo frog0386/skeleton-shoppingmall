@@ -8,12 +8,13 @@
 	import { user, profile, itemData, cartData } from '$lib/stores';
 	import axios from 'axios';
 	import { toastMessage } from '$lib/stores';
+import { goto } from '$app/navigation';
 	let name = '';
 	let address1 = '';
 	let address2 = '';
 	let phone = '';
 	let itemList = [];
-  let cartList = [];
+	let cartList = [];
 	let items = [];
 	let option = [];
 	let quantity = [];
@@ -35,19 +36,23 @@
 					.select('*,brand(*),option(*)')
 					.eq('id', itemList[i].itemID);
 				items.push(data.body[0]);
-        sailPriceSum = countSailSum_item();
-		    normalPriceSum = countNormalPriceSum_item();
+        items[i].option = option[i];
+        items[i].quantity = quantity[i];
+        let optionIdValue = await supabase.from('option').select('id').eq('option',items[i].option).eq('item_id',items[i].id);
+        items[i].optionId = optionIdValue.body[0].id;
+				sailPriceSum = countSailSum_item();
+				normalPriceSum = countNormalPriceSum_item();
 			}
 			items = items;
 		} else if ($cartData) {
-      console.log($cartData);
+			console.log($cartData);
 			cartList = $cartData;
-      for(let i=0; i<cartList.length; i++){
-        option[i] = cartList[i].option.option;
-        quantity[i] = cartList[i].quantity;
-      }
-      sailPriceSum = countSailSum_cart();
-      normalPriceSum = countNormalPriceSum_cart();
+			for (let i = 0; i < cartList.length; i++) {
+				option[i] = cartList[i].option.option;
+				quantity[i] = cartList[i].quantity;
+			}
+			sailPriceSum = countSailSum_cart();
+			normalPriceSum = countNormalPriceSum_cart();
 		}
 	});
 	onDestroy(() => {
@@ -68,10 +73,11 @@
 		}
 		return priceSum;
 	}
-  function countSailSum_cart() {
+	function countSailSum_cart() {
 		let sailPriceSum = 0;
 		for (let i = 0; i < cartList.length; i++) {
-			sailPriceSum += cartList[i].item.normal_price * quantity[i] - cartList[i].item.price * quantity[i];
+			sailPriceSum +=
+				cartList[i].item.normal_price * quantity[i] - cartList[i].item.price * quantity[i];
 		}
 		return sailPriceSum;
 	}
@@ -81,6 +87,25 @@
 			priceSum += cartList[i].item.normal_price * quantity[i];
 		}
 		return priceSum;
+	}
+	async function handlePayClick() {
+		if ($itemData) {
+			let response = await axios.post('/apis/pay', {data : items, session: supabase.auth.session(), flag : 0 });
+      if(response.status === 200){
+        $toastMessage = "결제가 완료되었습니다.";
+      }
+      else{
+        $toastMessage = "오류가 발생했습니다.";
+      }
+		} else if ($cartData) {
+			let response = await axios.post('/apis/pay', { data : cartList, session: supabase.auth.session(), flag : 1 });
+      if(response.status === 200){
+        $toastMessage = "결제가 완료되었습니다.";
+      }
+      else{
+        $toastMessage = "오류가 발생했습니다.";
+      }
+		}
 	}
 </script>
 
@@ -115,182 +140,179 @@
 <div class=" p-4 border-b ">
 	<div class=" text-lg font-bold">구매 상품 목록</div>
 </div>
-{#if itemList.length !==0}
-{#each items as item, index}
-	<div class="flex gap-2 p-4 border-b">
-		<img src={item.image} class="flex items-end overflow-hidden w-24 h-24 rounded bg-white" />
-		<div class="flex flex-col">
-			<div class="flex justify-between">
-				<div class="flex flex-col gap-2">
-					<div class="mb-1 text-xs text-neutral-500">{item.brand.brandname}</div>
-					<div class="w-48 truncate font-bold">
-						{item.name}
-					</div>
-					<div class="flex  gap-2 items-center">
-						<div class="font-semibold">{addComma(item.price)}원</div>
-						<div class="font-bold line-through text-gray-400">
-							{addComma(item.normal_price)}원
+{#if itemList.length !== 0}
+	{#each items as item, index}
+		<div class="flex gap-2 p-4 border-b">
+			<img src={item.image} class="flex items-end overflow-hidden w-24 h-24 rounded bg-white" />
+			<div class="flex flex-col">
+				<div class="flex justify-between">
+					<div class="flex flex-col gap-2">
+						<div class="mb-1 text-xs text-neutral-500">{item.brand.brandname}</div>
+						<div class="w-48 truncate font-bold">
+							{item.name}
 						</div>
-					
+						<div class="flex  gap-2 items-center">
+							<div class="font-semibold">{addComma(item.price)}원</div>
+							<div class="font-bold line-through text-gray-400">
+								{addComma(item.normal_price)}원
+							</div>
+						</div>
+						<div class="flex gap-2">
+							<div class="text-sm text-gray-600 ">옵션 :{option[index]}</div>
+							<div class="text-sm text-gray-600">수량 : {quantity[index]}</div>
+						</div>
 					</div>
-          <div class="flex gap-2">
-            <div class="text-sm text-gray-600 ">옵션 :{option[index]}</div>
-            <div class="text-sm text-gray-600">수량 : {quantity[index]}</div>
-          </div>
 				</div>
 			</div>
 		</div>
+	{/each}
+
+	<div class="p-4 space-y-2 border-b">
+		<div class="font-bold text-lg ">할인 정보</div>
+		<div class="flex justify-between">
+			<div class="text-sm text-gray-500 ">상품 할인</div>
+			<div class=" ">{addComma(sailPriceSum)}원</div>
+		</div>
+		<div class="flex justify-between">
+			<div class="text-sm text-gray-500 ">등급 할인</div>
+			<div class=" ">0원</div>
+		</div>
+		<div class="flex justify-between">
+			<div class="text-sm font-bold ">할인합계</div>
+			<div class="text-blue-600 font-bold  ">{addComma(sailPriceSum)}원</div>
+		</div>
 	</div>
-{/each}
 
+	<div class="p-4 border-b">
+		<div class="font-bold text-lg ">결제 정보</div>
+		<div class="grid grid-cols-3 " />
+		<div class="flex justify-between gap-4 py-2">
+			<button class="border-2 rounded-md w-full h-12 font-bold">신용카드</button>
+			<button class="border-2 rounded-md w-full h-12 font-bold">가상계좌</button>
+			<button class="border-2 rounded-md w-full h-12 font-bold">계좌이체</button>
+		</div>
+		<div class="flex justify-between gap-4 py-2">
+			<button class="border-2 rounded-md w-full h-12 font-bold">휴대폰결제</button>
+			<button class="border-2 rounded-md w-full h-12 font-bold">토스페이</button>
+			<button class="border-2 rounded-md w-full h-12 font-bold">카카오페이</button>
+		</div>
+		<div class="flex justify-between gap-4 py-2">
+			<button class="border-2 rounded-md w-full h-12 font-bold">삼성페이</button>
+			<button class="border-2 rounded-md w-full h-12 font-bold">네이버페이</button>
+			<button class="border-2 rounded-md w-full h-12 font-bold">페이코</button>
+		</div>
+	</div>
 
-<div class="p-4 space-y-2 border-b">
-  <div class="font-bold text-lg ">할인 정보</div>
-  <div class="flex justify-between">
-    <div class="text-sm text-gray-500 ">상품 할인</div>
-    <div class=" ">{addComma(sailPriceSum)}원</div>
-  </div>
-  <div class="flex justify-between">
-    <div class="text-sm text-gray-500 ">등급 할인</div>
-    <div class=" ">0원</div>
-  </div>
-  <div class="flex justify-between">
-    <div class="text-sm font-bold ">할인합계</div>
-    <div class="text-blue-600 font-bold  ">{addComma(sailPriceSum)}원</div>
-  </div>
-</div>
+	<div class="p-4 space-y-2">
+		<div class="font-bold text-lg ">최종 결제 금액</div>
+		<div class="flex justify-between">
+			<div class="text-sm text-gray-500 ">상품 금액</div>
+			<div class=" ">{addComma(normalPriceSum)}원</div>
+		</div>
+		<div class="flex justify-between">
+			<div class="text-sm text-gray-500 ">할인 합계</div>
+			<div class=" ">{addComma(sailPriceSum)}원</div>
+		</div>
+		<div class="flex justify-between">
+			<div class="text-sm font-bold ">결제 금액</div>
+			<div class="text-blue-600 font-bold  ">{addComma(normalPriceSum - sailPriceSum)}원</div>
+		</div>
+	</div>
 
-<div class="p-4 border-b">
-  <div class="font-bold text-lg ">결제 정보</div>
-  <div class="grid grid-cols-3 " />
-  <div class="flex justify-between gap-4 py-2">
-    <button class="border-2 rounded-md w-full h-12 font-bold">신용카드</button>
-    <button class="border-2 rounded-md w-full h-12 font-bold">가상계좌</button>
-    <button class="border-2 rounded-md w-full h-12 font-bold">계좌이체</button>
-  </div>
-  <div class="flex justify-between gap-4 py-2">
-    <button class="border-2 rounded-md w-full h-12 font-bold">휴대폰결제</button
-    >
-    <button class="border-2 rounded-md w-full h-12 font-bold">토스페이</button>
-    <button class="border-2 rounded-md w-full h-12 font-bold">카카오페이</button
-    >
-  </div>
-  <div class="flex justify-between gap-4 py-2">
-    <button class="border-2 rounded-md w-full h-12 font-bold">삼성페이</button>
-    <button class="border-2 rounded-md w-full h-12 font-bold">네이버페이</button
-    >
-    <button class="border-2 rounded-md w-full h-12 font-bold">페이코</button>
-  </div>
-</div>
+	<div class="pb-20" />
+	<div class="px-4 pb-4 fixed bottom-0 left-0 right-0 sm:mx-auto sm:max-w-sm bg-white ">
+		<button on:click = {handlePayClick}
+			class="w-full h-14 rounded-full  text-center text-white bg-blue-600 font-bold hover:bg-gray-600"
+			>{addComma(normalPriceSum - sailPriceSum)}원 결제하기</button
+		>
+	</div>
+{:else if cartList.length !== 0}
+	{#each cartList as list, index}
+		<div class="flex gap-2 p-4 border-b">
+			<img
+				src={list.item.image}
+				class="flex items-end overflow-hidden w-24 h-24 rounded bg-white"
+			/>
+			<div class="flex flex-col">
+				<div class="flex justify-between">
+					<div class="flex flex-col gap-2">
+						<div class="mb-1 text-xs text-neutral-500">{list.brand}</div>
+						<div class="w-48 truncate font-bold">
+							{list.item.name}
+						</div>
+						<div class="flex  gap-2 items-center">
+							<div class="font-semibold">{addComma(list.item.price)}원</div>
+							<div class="font-bold line-through text-gray-400">
+								{addComma(list.item.normal_price)}원
+							</div>
+						</div>
+						<div class="flex gap-2">
+							<div class="text-sm text-gray-600 ">옵션 :{option[index]}</div>
+							<div class="text-sm text-gray-600">수량 : {quantity[index]}</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	{/each}
 
-<div class="p-4 space-y-2">
-  <div class="font-bold text-lg ">최종 결제 금액</div>
-  <div class="flex justify-between">
-    <div class="text-sm text-gray-500 ">상품 금액</div>
-    <div class=" ">{addComma(normalPriceSum)}원</div>
-  </div>
-  <div class="flex justify-between">
-    <div class="text-sm text-gray-500 ">할인 합계</div>
-    <div class=" ">{addComma(sailPriceSum)}원</div>
-  </div>
-  <div class="flex justify-between">
-    <div class="text-sm font-bold ">결제 금액</div>
-    <div class="text-blue-600 font-bold  ">{addComma(normalPriceSum-sailPriceSum)}원</div>
-  </div>
-</div>
+	<div class="p-4 space-y-2 border-b">
+		<div class="font-bold text-lg ">할인 정보</div>
+		<div class="flex justify-between">
+			<div class="text-sm text-gray-500 ">상품 할인</div>
+			<div class=" ">{addComma(sailPriceSum)}원</div>
+		</div>
+		<div class="flex justify-between">
+			<div class="text-sm text-gray-500 ">등급 할인</div>
+			<div class=" ">0원</div>
+		</div>
+		<div class="flex justify-between">
+			<div class="text-sm font-bold ">할인합계</div>
+			<div class="text-blue-600 font-bold  ">{addComma(sailPriceSum)}원</div>
+		</div>
+	</div>
 
-<div class="pb-20" />
-<div class="px-4 pb-4 fixed bottom-0 left-0 right-0 sm:mx-auto sm:max-w-sm bg-white ">
-  <button class="w-full h-14 rounded-full  text-center text-white bg-blue-600 font-bold hover:bg-gray-600"
-    >{addComma(normalPriceSum-sailPriceSum)}원 결제하기</button
-  >
-</div>
-{:else if cartList.length!==0}
-{#each cartList as list, index}
-<div class="flex gap-2 p-4 border-b">
-  <img src={list.item.image} class="flex items-end overflow-hidden w-24 h-24 rounded bg-white" />
-  <div class="flex flex-col">
-    <div class="flex justify-between">
-      <div class="flex flex-col gap-2">
-        <div class="mb-1 text-xs text-neutral-500">{list.brand}</div>
-        <div class="w-48 truncate font-bold">
-          {list.item.name}
-        </div>
-        <div class="flex  gap-2 items-center">
-          <div class="font-semibold">{addComma(list.item.price)}원</div>
-          <div class="font-bold line-through text-gray-400">
-            {addComma(list.item.normal_price)}원
-          </div>
-        
-        </div>
-        <div class="flex gap-2">
-          <div class="text-sm text-gray-600 ">옵션 :{option[index]}</div>
-          <div class="text-sm text-gray-600">수량 : {quantity[index]}</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-{/each}
+	<div class="p-4 border-b">
+		<div class="font-bold text-lg ">결제 정보</div>
+		<div class="grid grid-cols-3 " />
+		<div class="flex justify-between gap-4 py-2">
+			<button class="border-2 rounded-md w-full h-12 font-bold">신용카드</button>
+			<button class="border-2 rounded-md w-full h-12 font-bold">가상계좌</button>
+			<button class="border-2 rounded-md w-full h-12 font-bold">계좌이체</button>
+		</div>
+		<div class="flex justify-between gap-4 py-2">
+			<button class="border-2 rounded-md w-full h-12 font-bold">휴대폰결제</button>
+			<button class="border-2 rounded-md w-full h-12 font-bold">토스페이</button>
+			<button class="border-2 rounded-md w-full h-12 font-bold">카카오페이</button>
+		</div>
+		<div class="flex justify-between gap-4 py-2">
+			<button class="border-2 rounded-md w-full h-12 font-bold">삼성페이</button>
+			<button class="border-2 rounded-md w-full h-12 font-bold">네이버페이</button>
+			<button class="border-2 rounded-md w-full h-12 font-bold">페이코</button>
+		</div>
+	</div>
+	<div class="p-4 space-y-2">
+		<div class="font-bold text-lg ">최종 결제 금액</div>
+		<div class="flex justify-between">
+			<div class="text-sm text-gray-500 ">상품 금액</div>
+			<div class=" ">{addComma(normalPriceSum)}원</div>
+		</div>
+		<div class="flex justify-between">
+			<div class="text-sm text-gray-500 ">할인 합계</div>
+			<div class=" ">{addComma(sailPriceSum)}원</div>
+		</div>
+		<div class="flex justify-between">
+			<div class="text-sm font-bold ">결제 금액</div>
+			<div class="text-blue-600 font-bold  ">{addComma(normalPriceSum - sailPriceSum)}원</div>
+		</div>
+	</div>
 
-<div class="p-4 space-y-2 border-b">
-  <div class="font-bold text-lg ">할인 정보</div>
-  <div class="flex justify-between">
-    <div class="text-sm text-gray-500 ">상품 할인</div>
-    <div class=" ">{addComma(sailPriceSum)}원</div>
-  </div>
-  <div class="flex justify-between">
-    <div class="text-sm text-gray-500 ">등급 할인</div>
-    <div class=" ">0원</div>
-  </div>
-  <div class="flex justify-between">
-    <div class="text-sm font-bold ">할인합계</div>
-    <div class="text-blue-600 font-bold  ">{addComma(sailPriceSum)}원</div>
-  </div>
-</div>
-
-<div class="p-4 border-b">
-  <div class="font-bold text-lg ">결제 정보</div>
-  <div class="grid grid-cols-3 " />
-  <div class="flex justify-between gap-4 py-2">
-    <button class="border-2 rounded-md w-full h-12 font-bold">신용카드</button>
-    <button class="border-2 rounded-md w-full h-12 font-bold">가상계좌</button>
-    <button class="border-2 rounded-md w-full h-12 font-bold">계좌이체</button>
-  </div>
-  <div class="flex justify-between gap-4 py-2">
-    <button class="border-2 rounded-md w-full h-12 font-bold">휴대폰결제</button
-    >
-    <button class="border-2 rounded-md w-full h-12 font-bold">토스페이</button>
-    <button class="border-2 rounded-md w-full h-12 font-bold">카카오페이</button
-    >
-  </div>
-  <div class="flex justify-between gap-4 py-2">
-    <button class="border-2 rounded-md w-full h-12 font-bold">삼성페이</button>
-    <button class="border-2 rounded-md w-full h-12 font-bold">네이버페이</button
-    >
-    <button class="border-2 rounded-md w-full h-12 font-bold">페이코</button>
-  </div>
-</div>
-<div class="p-4 space-y-2">
-  <div class="font-bold text-lg ">최종 결제 금액</div>
-  <div class="flex justify-between">
-    <div class="text-sm text-gray-500 ">상품 금액</div>
-    <div class=" ">{addComma(normalPriceSum)}원</div>
-  </div>
-  <div class="flex justify-between">
-    <div class="text-sm text-gray-500 ">할인 합계</div>
-    <div class=" ">{addComma(sailPriceSum)}원</div>
-  </div>
-  <div class="flex justify-between">
-    <div class="text-sm font-bold ">결제 금액</div>
-    <div class="text-blue-600 font-bold  ">{addComma(normalPriceSum-sailPriceSum)}원</div>
-  </div>
-</div>
-
-<div class="pb-20" />
-<div class="px-4 pb-4 fixed bottom-0 left-0 right-0 sm:mx-auto sm:max-w-sm bg-white ">
-  <button class="w-full h-14 rounded-full  text-center text-white bg-blue-600 font-bold hover:bg-gray-600"
-    >{addComma(normalPriceSum-sailPriceSum)}원 결제하기</button
-  >
-</div>
+	<div class="pb-20" />
+	<div class="px-4 pb-4 fixed bottom-0 left-0 right-0 sm:mx-auto sm:max-w-sm bg-white ">
+		<button
+			on:click={handlePayClick}
+			class="w-full h-14 rounded-full  text-center text-white bg-blue-600 font-bold hover:bg-gray-600"
+			>{addComma(normalPriceSum - sailPriceSum)}원 결제하기</button
+		>
+	</div>
 {/if}
