@@ -4,6 +4,7 @@
 	export let size = 24;
 	export let stroke_width = 2;
 	export let fill = "none";
+	export let stroke = "currentColor"
 </script>
 
 {#if icon === 'heart-fill'}
@@ -24,6 +25,6 @@
 	>
 {:else}
 	{@html feather.icons[icon]
-		? feather.icons[icon].toSvg({ width: size, height: size, 'stroke-width': stroke_width, 'fill' : fill })
+		? feather.icons[icon].toSvg({ width: size, height: size, 'stroke-width': stroke_width, 'fill' : fill, 'stroke' : stroke })
 		: '-'}
 {/if}

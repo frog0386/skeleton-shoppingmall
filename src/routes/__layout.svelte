@@ -20,6 +20,7 @@
 	import { page } from '$app/stores';
 	import Toast from '$lib/Toast.svelte';
 	import { getProfile } from '$lib/util';
+	import StarRating from 'svelte-star-rating';
 
 	$user = supabase.auth.user();
 
@@ -67,6 +68,9 @@
 					<Icon icon="x" size={20} />
 				</button>
 			</h4>
+			{#if $modal.rating}
+				<StarRating rating = {$modal.rating}/>
+			{/if}
 			<p class="text-gray-500 my-2 text-sm ">{$modal.message}</p>
 			{#if $modal.buttons}
 				<div class = "flex gap-4">

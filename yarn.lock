@@ -2504,6 +2504,11 @@
   dependencies:
     "svelte" "3.x"
 
+"svelte-star-rating@^2.0.0":
+  "integrity" "sha512-1krisQtIQIOWrm1Hb+P9aYwcTleX2iJvzExz9rvWNAHUEeIlsL2O8JCNZgScS9f3FUri09Dcg56meX40Jb8pZA=="
+  "resolved" "https://registry.npmjs.org/svelte-star-rating/-/svelte-star-rating-2.0.0.tgz"
+  "version" "2.0.0"
+
 "svelte-yup@^1.0.5":
   "integrity" "sha512-7PDwqk1cAAnrsWimp63oSvHUp2+YcQtLgyqpOlxMRz6fs4dZbR/f8yzrQuL0cyFkUn6eVGvV6lNkflXqTdHjmQ=="
   "resolved" "https://registry.npmjs.org/svelte-yup/-/svelte-yup-1.0.5.tgz"

@@ -109,7 +109,7 @@
 					</div>
 				</a>
 
-				<button class="w-full space-y-2 py-2"
+				<a href = "/users/reviews" class="w-full space-y-2 py-2"
 					><div class="flex justify-center">
 						<Icon icon="star" size={24} />
 					</div>
@@ -117,7 +117,7 @@
 						<div class="">리뷰</div>
 						<div class="font-bold ">0</div>
 					</div>
-				</button>
+				</a>
 
 				<a href = "/orders/list" class="w-full space-y-2 py-2"
 					><div class="flex justify-center">
