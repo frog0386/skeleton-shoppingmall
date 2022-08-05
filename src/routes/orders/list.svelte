@@ -54,9 +54,9 @@
 		<div class="py-2">
 			<div class="flex justify-between text-gray-400 p-4 border-b border-t">
 				<div class=" font-bold">{dateFormat(order.created_at)}</div>
-				<div class="">
+				<a href ="/orders/{order.id}/detail"  class="">
 					<Icon icon="chevron-right" size={24} />
-				</div>
+				</a>
 			</div>
 			{#each order.line_item as item}
 				<a href = "/items/{item.item_id}/detail" class="flex gap-2 p-4 border-b">
