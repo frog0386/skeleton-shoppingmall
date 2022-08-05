@@ -76,7 +76,7 @@
       console.log(response);
 			if (response.status === 201) {
 				let index = unreviewedList.indexOf(itemId);
-				reviewedList.push(unreviewedList.splice(index, 1)[0]);
+				reviewedList.push({item_id :unreviewedList.splice(index, 1)[0]});
 				reviewedItemList.push(unreviewedItemList.splice(index, 1)[0]);
 				unreviewedList = unreviewedList;
 				unreviewedItemList = unreviewedItemList;
@@ -94,6 +94,8 @@
 	}
 
   async function handleReviewClick(index) {
+		console.log(reviewedList);
+		console.log(reviewedItemList);
     let review = await supabase.from('review').select('*').eq('item_id',reviewedList[index].item_id).eq('user_id',$user.id);
     console.log(review);
     $modal = {
