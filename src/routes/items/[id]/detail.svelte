@@ -278,7 +278,9 @@ import StarRating from 'svelte-star-rating';
 	</div>
 
 	<h3 class="font-bold my-4 border-t pt-2">리뷰 {reviewCount}</h3>
-
+	{#if reviewCount === 0}
+		<div class="text-center text-gray-500">작성된 리뷰가 없습니다.</div>
+	{:else}
 	{#each reviewData as review}
 	<div class="rounded bg-gray-100 p-4 mt-2">
 		<div class="flex items-center gap-2 text-sm">
@@ -291,6 +293,7 @@ import StarRating from 'svelte-star-rating';
 		</div>
 	</div>
 	{/each}
+	{/if}
 </div>
 <div class="pb-20" />
 

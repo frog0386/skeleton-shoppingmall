@@ -14,6 +14,10 @@
 			.string()
 			.required('이름을 입력해주세요.')
 			.matches(/^[ㄱ-ㅎ가-힣A-Za-z0-9]{2,10}/, '이름은 2글자 이상 10글자 이하로 입력해주세요.'),
+			username: yup
+			.string()
+			.required('이름을 입력해주세요.')
+			.matches(/^[ㄱ-ㅎ가-힣A-Za-z0-9]{2,10}/, '이름은 2글자 이상 10글자 이하로 입력해주세요.'),
 		email: yup
 			.string()
 			.required('이메일을 입력해주세요.')
@@ -29,6 +33,7 @@
 	});
 	let fields = {
 		name: '',
+		username : '',
 		email: '',
 		password: '',
 		password_confirmation: ''
@@ -59,7 +64,7 @@
 				await supabase.from('user').update({
 				name:fields.name
 			}).eq('id',user.id);
-				await supabase.from("user_info").insert({user_id:user.id, gender : gender});
+				await supabase.from("user_info").insert({user_id:user.id, gender : gender, username : fields.username});
 				goto('/users/login');
 			}
 		}
@@ -110,6 +115,18 @@
 			placeholder="이름을 입력하세요"
 		/>
 		<Message name="name" />
+	</div>
+	<div>
+		<label for="name" class="text-sm font-bold text-gray-400 block mb-1">닉네임</label>
+		<input
+			id="username"
+			type="text"
+			class="input"
+			bind:value={fields.username}
+			class:invalid={invalid('name')}
+			placeholder="닉네임을 입력하세요"
+		/>
+		<Message name="username" />
 	</div>
 	<div>
 		<label for="email" class="text-sm font-bold text-gray-400 block mb-1 mt-3">이메일</label>

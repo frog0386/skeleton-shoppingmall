@@ -159,43 +159,7 @@
 	</div>
 {/if}
 
-<div class="p-4 font-bold border-y">배송지 관리</div>
-{#if flag_address === true}
-	<a
-		href="/users/editaddress"
-		class="text-gray-400 h-40 flex justify-center items-center space-x-4"
-	>
-		<Icon icon="map" size={32} />
-		<div class="">주소를 등록해주세요.</div>
-	</a>
-{:else}
-	<div class="px-4 space-y-2 border-b py-6">
-		<div class="flex gap-4">
-			<div class="text-gray-400 w-18">우편번호</div>
-			<div class="">{user_info.zipcode}</div>
-			<a href="/users/editaddress" class="flex flex-1 text-blue-500 justify-end">
-				배송지 수정<svg
-					xmlns="http://www.w3.org/2000/svg"
-					width="24"
-					height="24"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="1"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					class="feather feather-chevron-right"
-				>
-					<polyline points="9 18 15 12 9 6" />
-				</svg>
-			</a>
-		</div>
-		<div class="flex gap-6">
-			<div class="text-gray-400 w-14 ">주소</div>
-			<div class="">{user_info.address1 + ' '}{user_info.address2}</div>
-		</div>
-	</div>
-{/if}
+
 
 <div class="mx-4">
 	<button
