@@ -9,7 +9,19 @@
 	let items = [];
 	let itemsCount = [];
 	let itemDataArray = [];
+	let rankItem = [];
+	let rankFlag =false;
 	onMount(async () => {
+		let rankData = await supabase.rpc('get_item_rank');
+		console.log(rankData);
+		rankItem = rankData.body;
+		for(let i=0; i<rankItem.length; i++){
+			let itemData = await supabase.from('item').select('*,brand(*)').eq('id',rankItem[i].item_id);
+			rankItem[i].itemInfo = itemData.body[0];
+			if(i=== 9){
+				rankFlag = true;
+			}
+		}
 		let data = await supabase.from('category').select();
 		categories = data.body;
 		for (let i = 0; i < categories.length; i++) {
@@ -30,6 +42,7 @@
 			items = [...items,itemDataArray];
 			itemDataArray = [];
 		}
+
 	});
 	async function selectIndex(totalIndex, selectingNumber) {
 		let randomIndexArray = [];
@@ -62,73 +75,30 @@
 	</div>
 </div>
 
-<div class="py-4 mx-4  text-lg  font-black">이번 주! TOP10</div>
+{#if rankFlag}
+<div class="py-4 mx-4  text-lg  font-black">전체 TOP10 상품</div>
 <div class="px-4 pb-8">
 	<div class=" gap-2 flex overflow-x-auto">
+		{#each rankItem as item , index}
 		<a href="/" class=" space-y-2 relative ">
 			<img
 				class="rounded-md w-28 h-28 object-cover border border-gray-300"
-				src="https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMzQ2NXwwfDF8c2VhcmNofDd8fG1vYmlsZXxlbnwwfHx8fDE2NDQ3NDE3MTM&ixlib=rb-1.2.1&q=80&w=1080"
+				src={item.itemInfo.image}
 			/>
-			<div class="w-28">
-				<div class=" text-sm  block text-elipses overflow-hidden">
-					삼립빵 14종 허쉬 초코롤 단팥빵
+			<div class="w-28 p-2">
+				<div class=" text-sm  block text-elipses overflow-hidden h-16">
+					{item.itemInfo.name}
 				</div>
-				<div class="text-red-400 text-sm font-bold">10,000원</div>
+				<div class="text-red-400 text-sm font-bold">{addComma(item.itemInfo.price)}원</div>
 			</div>
 			<div class="absolute top-0 right-2">
-				<div class="text-white text-center  bg-blue-600 w-6 h-6 font-bold rounded-md ">1</div>
+				<div class="text-white text-center  bg-blue-600 w-6 h-6 font-bold rounded-md ">{index+1}</div>
 			</div>
 		</a>
-		<a href="/" class=" space-y-2 relative ">
-			<img
-				class="rounded-md w-28 h-28 object-cover border border-gray-300"
-				src="https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMzQ2NXwwfDF8c2VhcmNofDd8fG1vYmlsZXxlbnwwfHx8fDE2NDQ3NDE3MTM&ixlib=rb-1.2.1&q=80&w=1080"
-			/>
-			<div class="w-28">
-				<div class=" text-sm  block text-elipses overflow-hidden">
-					삼립빵 14종 허쉬 초코롤 단팥빵
-				</div>
-				<div class="text-red-400 text-sm font-bold">10,000원</div>
-			</div>
-			<div class="absolute top-0 right-2">
-				<div class="text-white text-center  bg-blue-600 w-6 h-6 font-bold rounded-md ">2</div>
-			</div>
-		</a>
-		<a href="/" class=" space-y-2 relative ">
-			<img
-				class="rounded-md w-28 h-28 object-cover border border-gray-300"
-				src="https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMzQ2NXwwfDF8c2VhcmNofDd8fG1vYmlsZXxlbnwwfHx8fDE2NDQ3NDE3MTM&ixlib=rb-1.2.1&q=80&w=1080"
-			/>
-			<div class="w-28">
-				<div class=" text-sm  block text-elipses overflow-hidden">
-					삼립빵 14종 허쉬 초코롤 단팥빵
-				</div>
-				<div class="text-red-400 text-sm font-bold">10,000원</div>
-			</div>
-			<div class="absolute top-0 right-2">
-				<div class="text-white text-center  bg-blue-600 w-6 h-6 font-bold rounded-md ">3</div>
-			</div>
-		</a>
-
-		<a href="/" class=" space-y-2 relative ">
-			<img
-				class="rounded-md w-28 h-28 object-cover border border-gray-300"
-				src="https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMzQ2NXwwfDF8c2VhcmNofDd8fG1vYmlsZXxlbnwwfHx8fDE2NDQ3NDE3MTM&ixlib=rb-1.2.1&q=80&w=1080"
-			/>
-			<div class="w-28">
-				<div class=" text-sm  block text-elipses overflow-hidden">
-					삼립빵 14종 허쉬 초코롤 단팥빵
-				</div>
-				<div class="text-red-400 text-sm font-bold">10,000원</div>
-			</div>
-			<div class="absolute top-0 right-2">
-				<div class="text-white text-center  bg-blue-600 w-6 h-6 font-bold rounded-md ">4</div>
-			</div>
-		</a>
+		{/each}
 	</div>
 </div>
-
+{/if}
 
 
 	{#each categories as category}
