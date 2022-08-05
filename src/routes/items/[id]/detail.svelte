@@ -5,11 +5,12 @@
 	import { supabase } from '$lib/supabase';
 	import { user, itemData } from '$lib/stores';
 	import { toastMessage } from '$lib/stores';
-	import { addComma } from '$lib/util';
+	import { addComma, getTimeDiff } from '$lib/util';
 	import { page } from '$app/stores';
 	import { modal } from '$lib/stores';
 	import axios from 'axios';
 import { goto } from '$app/navigation';
+import StarRating from 'svelte-star-rating';
 	let item = [];
 	let itemID = '';
 	let itemName = '';
@@ -27,6 +28,7 @@ import { goto } from '$app/navigation';
 	let reviewCount = '';
 	let likeFlag = false;
 	let buyFlag = false;
+	let reviewData = [];
 
 	onMount(async () => {
 		let data = await supabase.from('item').select('*,brand(*),option(*)').eq('id', $page.params.id);
@@ -53,9 +55,12 @@ import { goto } from '$app/navigation';
 				likeFlag = true;
 			}
 		}
-		console.log(item);
 		let count = await supabase.from('review').select('*', { count: 'exact', head: true }).eq('item_id', $page.params.id);
 		reviewCount = count.count;
+		let review = await supabase.from('review').select('*,user(*)').eq('item_id', $page.params.id).limit(5);
+		reviewData = review.body;
+		console.log(reviewData);
+
 	});
 
 	onDestroy(async () => {
@@ -274,23 +279,18 @@ import { goto } from '$app/navigation';
 
 	<h3 class="font-bold my-4 border-t pt-2">리뷰 {reviewCount}</h3>
 
+	{#each reviewData as review}
 	<div class="rounded bg-gray-100 p-4 mt-2">
-		<div class="flex items-center gap-2 text-sm ">
-			<span class="font-bold"> 줴임스 </span>
-			<div class="span text-yellow-300 flex">
-				<Icon icon="star" size={14} />
-				<Icon icon="star" size={14} />
-				<Icon icon="star" size={14} />
-				<Icon icon="star" size={14} />
-				<Icon icon="star" size={14} />
-			</div>
-			<span class="flex-1 text-right text-gray-400 "> 3일 전 </span>
+		<div class="flex items-center gap-2 text-sm">
+			<span class="font-bold">{review.user.name}</span>
+			<div class="pt-2"><StarRating rating = {review.star} config = {{size:16}}/></div>
+			<span class="flex-1 text-right text-gray-400 ">{getTimeDiff(review.created_at)}</span>
 		</div>
 		<div class="text-sm mt-2">
-			너무 좋은 것 같아요 다음에도 이용하겠습니다.너무 좋은 것 같아요 다음에도 이용하겠습니다.너무
-			좋은 것 같아요 다음에도 이용하겠습니다.
+			{review.body}
 		</div>
 	</div>
+	{/each}
 </div>
 <div class="pb-20" />
 
