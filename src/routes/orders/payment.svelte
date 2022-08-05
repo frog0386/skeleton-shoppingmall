@@ -30,7 +30,7 @@
 	let address2 = '';
 	let request = '';
 	onMount(async () => {
-		let addressData = await supabase.from('user_address').select().eq('user_id', $user.id);
+		let addressData = await supabase.from('user_address').select().eq('user_id', $user.id).eq('status','active');
 		addressList = addressData.body;
 		addressOption = addressList[0];
 
@@ -143,7 +143,7 @@
 	};
 
 	async function saveAddress(){
-		const {data} = await supabase.from('user_address').insert({name : name, address_name : addressName, zipcode : zipcode, address1 : address1, address2 : address2, phone : phone, user_id : $user.id});
+		const {data} = await supabase.from('user_address').insert({name : name, address_name : addressName, zipcode : zipcode, address1 : address1, address2 : address2, phone : phone, user_id : $user.id, status : "active"});
 		let id = data[0].id
 		addressList.push({
       address1: address1,
@@ -164,7 +164,7 @@
 		phone = '';
 	}
 	async function handleDelete(){
-		await supabase.from('user_address').delete().eq('id',addressOption.id);
+		await supabase.from('user_address').update({status : "inactive"}).eq('id',addressOption.id);
 		let index = addressList.indexOf(addressOption);
 		let temp = addressList.splice(index,1);
 		addressList = addressList;
@@ -356,7 +356,7 @@
 	{#if !addressOption}
 		<div class=" p-4 space-y-2">
 			<div class="font-bold text-lg border-b pb-2">배송 정보</div>
-			<div class="text-gray-500 text-center pt-2">등록된 배송지 정보가 없습니다.</div>
+			<div class="text-gray-500 text-center pt-2">배송지를 추가하거나 선택해주세요.</div>
 			<button
 				on:click={() => {
 					addressFlag = true;
@@ -379,6 +379,7 @@
 					배송지 변경
 				</button>
 			</div>
+			<div class="">{addressOption.address_name}</div>
 			<div class="">{addressOption.name}</div>
 			<div class="text-sm text-gray-500 ">{addressOption.phone}</div>
 			<div class=" flex">
