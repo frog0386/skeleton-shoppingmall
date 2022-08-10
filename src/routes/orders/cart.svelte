@@ -69,6 +69,7 @@
       const response = await axios.delete('/apis/cart',{data:{item : cartItems[index],session : supabase.auth.session()}});
       if(response.status === 200){
         let temp = cartItems.splice(index,1);
+      temp = checkboxValue.splice(index,1);
       cartItems = cartItems;
       normalPriceSum = sumAllNormalPrice()
       priceSum = sumAllPrice();
