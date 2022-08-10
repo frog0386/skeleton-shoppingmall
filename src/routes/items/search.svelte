@@ -31,8 +31,18 @@
 
 	function searchWordClick(index){
 		let searchWord = searchArr[index];
+		let temp = searchArr.splice(index,1);
+		searchArr.unshift(searchWord);
+		localStorage.setItem('search', JSON.stringify(searchArr));
+		console.log(searchArr);
 		$page.url.searchParams.set('keyword', searchWord);
 		goto(`/items/searchresults?${$page.url.searchParams.toString()}`);
+	}
+
+	function handleRemoveClick(index){
+		let temp = searchArr.splice(index,1);
+		localStorage.setItem('search', JSON.stringify(searchArr));
+		searchArr = searchArr;
 	}
 </script>
 
@@ -44,7 +54,7 @@
 <div class="px-4 mt-2 border">
 	<form
 		on:submit|preventDefault={async () => {
-			searchArr.push(searchInput);
+			searchArr.unshift(searchInput);
 			localStorage.setItem('search', JSON.stringify(searchArr));
 			$page.url.searchParams.set('keyword', searchInput);
 			goto(`/items/searchresults?${$page.url.searchParams.toString()}`);
@@ -69,9 +79,15 @@
 	<div class="grid grid-cols-2 text-center gap-2 text-gray-500">
 		{#each searchArr as searchWord, index}
 			{#if index % 2 === 1}
+			<div class="flex relative justify-center items-center">
 				<button on:click = {()=>searchWordClick(index)} class=" h-8">{searchWord}</button>
+				<button on:click = {()=>handleRemoveClick(index)} class = "absolute right-1"><Icon icon = "x"/></button>
+			</div>
 			{:else}
-				<button on:click = {()=>searchWordClick(index)} class="border-r h-8">{searchWord}</button>
+			<div class="flex relative justify-center items-center border-r">
+				<button on:click = {()=>searchWordClick(index)} class=" h-8">{searchWord}</button>
+				<button on:click = {()=>handleRemoveClick(index)} class = "absolute right-1"><Icon icon = "x"/></button>
+			</div>
 			{/if}
 		{/each}
 	</div>
