@@ -59,8 +59,6 @@
     let sum=0;
       for(let i=0; i<checkboxValue.length; i++){
           sum += cartItems[checkboxValue[i]].item.price * cartItems[checkboxValue[i]].quantity;
-
-        
       }
       return sum; 
     }
@@ -70,6 +68,12 @@
       if(response.status === 200){
         let temp = cartItems.splice(index,1);
       temp = checkboxValue.splice(index,1);
+      for(let i=0; i<checkboxValue.length; i++){
+        if(checkboxValue[i] > index){
+          checkboxValue[i]--;
+        }
+      }
+      console.log(checkboxValue);
       cartItems = cartItems;
       normalPriceSum = sumAllNormalPrice()
       priceSum = sumAllPrice();
