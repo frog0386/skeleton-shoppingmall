@@ -3,7 +3,7 @@
 	import Back from '$lib/Back.svelte';
   import { onMount, onDestroy } from 'svelte';
   import { supabase } from '$lib/supabase';
-  import { addComma, dateFormat } from '$lib/util';
+  import { addComma, dateFormat, } from '$lib/util';
 	import { user} from '$lib/stores';
   import { page } from '$app/stores';
   

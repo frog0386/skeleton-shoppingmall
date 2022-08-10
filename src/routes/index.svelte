@@ -3,13 +3,16 @@
 	import Menu from '$lib/Menu.svelte';
 	import { onMount } from 'svelte';
 	import { supabase } from '$lib/supabase';
-	import { addComma } from '$lib/util';
+	import { addComma, isEmpty } from '$lib/util';
+
 
 	let categories = [];
 	let items = [];
 	let itemsCount = [];
 	let itemDataArray = [];
 	let rankItem = [];
+	let recentItems = [];
+	let recentItemsInfo = [];
 	let rankFlag =false;
 	onMount(async () => {
 		let rankData = await supabase.rpc('get_item_rank');
@@ -22,6 +25,18 @@
 				rankFlag = true;
 			}
 		}
+		let temp = localStorage.getItem('recentItem');
+		if (isEmpty(temp)) {
+			recentItems = [];
+		} else {
+			recentItems = JSON.parse(temp);
+		}
+		for(let i=0; i<recentItems.length; i++){
+			let itemData = await supabase.from('item').select().eq('id',recentItems[i]);
+			recentItemsInfo.push(itemData.body[0]);
+		}
+		recentItemsInfo = recentItemsInfo;
+		console.log(recentItemsInfo);
 		let data = await supabase.from('category').select();
 		categories = data.body;
 		for (let i = 0; i < categories.length; i++) {
@@ -80,7 +95,7 @@
 <div class="px-4 pb-8">
 	<div class=" gap-2 flex overflow-x-auto">
 		{#each rankItem as item , index}
-		<a href="/" class=" space-y-2 relative ">
+		<a href="/items/{item.itemInfo.id}/detail" class=" space-y-2 relative ">
 			<img
 				class="rounded-md w-28 h-28 object-cover border border-gray-300"
 				src={item.itemInfo.image}
@@ -100,6 +115,28 @@
 </div>
 {/if}
 
+
+{#if recentItemsInfo.length !== 0}
+<div class="py-4 mx-4  text-lg  font-black border-t">최근 본 상품</div>
+{/if}
+<div class="px-4 pb-8">
+	<div class=" gap-2 flex overflow-x-auto">
+		{#each recentItemsInfo as recentItem}
+		<a href="/items/{recentItem.id}/detail" class=" space-y-2">
+			<img
+				class="rounded-md w-28 h-28 object-cover border border-gray-300"
+				src={recentItem.image}
+			/>
+			<div class="w-28">
+				<div class=" text-sm h-20  block text-elipses overflow-hidden h-16">
+					{recentItem.name}
+				</div>
+				<div class="text-red-400 text-sm font-bold h-6">{addComma(recentItem.price)}원</div>
+			</div>
+		</a>
+		{/each}
+	</div>
+</div>
 
 	{#each categories as category}
 		<div class="mx-4 flex justify-between items-end bg-white border-t py-4">
@@ -124,61 +161,6 @@
 	{/each}
 
 
-<div class="py-4 mx-4  text-lg  font-black border-t">최근 본 상품</div>
-
-<div class="px-4 pb-8">
-	<div class=" gap-2 flex overflow-x-auto">
-		<a href="/" class=" space-y-2">
-			<img
-				class="rounded-md w-28 h-28 object-cover border border-gray-300"
-				src="https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMzQ2NXwwfDF8c2VhcmNofDd8fG1vYmlsZXxlbnwwfHx8fDE2NDQ3NDE3MTM&ixlib=rb-1.2.1&q=80&w=1080"
-			/>
-			<div class="w-28">
-				<div class=" text-sm  block text-elipses overflow-hidden">
-					삼립빵 14종 허쉬 초코롤 단팥빵
-				</div>
-				<div class="text-red-400 text-sm font-bold">10,000원</div>
-			</div>
-		</a>
-		<a href="/" class=" space-y-2">
-			<img
-				class="rounded-md w-28 h-28 object-cover border border-gray-300"
-				src="https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMzQ2NXwwfDF8c2VhcmNofDd8fG1vYmlsZXxlbnwwfHx8fDE2NDQ3NDE3MTM&ixlib=rb-1.2.1&q=80&w=1080"
-			/>
-			<div class="w-28">
-				<div class=" text-sm  block text-elipses overflow-hidden">
-					삼립빵 14종 허쉬 초코롤 단팥빵
-				</div>
-				<div class="text-red-400 text-sm font-bold">10,000원</div>
-			</div>
-		</a>
-		<a href="/" class=" space-y-2">
-			<img
-				class="rounded-md w-28 h-28 object-cover border border-gray-300"
-				src="https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMzQ2NXwwfDF8c2VhcmNofDd8fG1vYmlsZXxlbnwwfHx8fDE2NDQ3NDE3MTM&ixlib=rb-1.2.1&q=80&w=1080"
-			/>
-			<div class="w-28">
-				<div class=" text-sm  block text-elipses overflow-hidden">
-					삼립빵 14종 허쉬 초코롤 단팥빵
-				</div>
-				<div class="text-red-400 text-sm font-bold">10,000원</div>
-			</div>
-		</a>
-
-		<a href="/" class=" space-y-2">
-			<img
-				class="rounded-md w-28 h-28 object-cover border border-gray-300"
-				src="https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMzQ2NXwwfDF8c2VhcmNofDd8fG1vYmlsZXxlbnwwfHx8fDE2NDQ3NDE3MTM&ixlib=rb-1.2.1&q=80&w=1080"
-			/>
-			<div class="w-28">
-				<div class=" text-sm  block text-elipses overflow-hidden">
-					삼립빵 14종 허쉬 초코롤 단팥빵
-				</div>
-				<div class="text-red-400 text-sm font-bold">10,000원</div>
-			</div>
-		</a>
-	</div>
-</div>
 
 <div class="pb-16" />
 <Menu />

@@ -9,8 +9,9 @@
 	import { page } from '$app/stores';
 	import { modal } from '$lib/stores';
 	import axios from 'axios';
-import { goto } from '$app/navigation';
-import StarRating from 'svelte-star-rating';
+	import { goto } from '$app/navigation';
+	import StarRating from 'svelte-star-rating';
+	import { isEmpty } from '$lib/util';
 	let item = [];
 	let itemID = '';
 	let itemName = '';
@@ -24,11 +25,13 @@ import StarRating from 'svelte-star-rating';
 	let selected;
 	let selectedItems = [];
 	let optionValue;
-	let totalPrice=0;
+	let totalPrice = 0;
 	let reviewCount = '';
 	let likeFlag = false;
 	let buyFlag = false;
 	let reviewData = [];
+	let recentItems = [];
+	let recentFlag = false;
 
 	onMount(async () => {
 		let data = await supabase.from('item').select('*,brand(*),option(*)').eq('id', $page.params.id);
@@ -41,7 +44,7 @@ import StarRating from 'svelte-star-rating';
 		itemNormalPrice = item.normal_price;
 		itemDescription = item.description;
 		itemRating = item.rating;
-		if(itemRating === null){
+		if (itemRating === null) {
 			itemRating = 0;
 		}
 		options = item.option;
@@ -55,16 +58,56 @@ import StarRating from 'svelte-star-rating';
 				likeFlag = true;
 			}
 		}
-		let count = await supabase.from('review').select('*', { count: 'exact', head: true }).eq('item_id', $page.params.id);
+		let count = await supabase
+			.from('review')
+			.select('*', { count: 'exact', head: true })
+			.eq('item_id', $page.params.id);
 		reviewCount = count.count;
-		let review = await supabase.from('review').select('*,user(*)').eq('item_id', $page.params.id).limit(5);
+		let review = await supabase
+			.from('review')
+			.select('*,user(*)')
+			.eq('item_id', $page.params.id)
+			.limit(5);
 		reviewData = review.body;
 		console.log(reviewData);
-
+		let temp = localStorage.getItem('recentItem');
+		console.log(temp);
+		if (isEmpty(temp)) {
+			recentItems.push($page.params.id);
+			localStorage.setItem('recentItem', JSON.stringify(recentItems));
+		} else {
+			recentItems = JSON.parse(temp);
+			for (let i = 0; i < recentItems.length; i++) {
+				console.log(recentItems[i]);
+				if (recentItems[i] === $page.params.id) {
+					recentFlag = true;
+				}
+			}
+			console.log(recentFlag);
+			if (!recentFlag) {
+				recentItems = JSON.parse(temp);
+				if (recentItems.length === 10) {
+					recentItems.unshift($page.params.id);
+					let temp = recentItems.pop();
+					localStorage.setItem('recentItem', JSON.stringify(recentItems));
+				} else {
+					recentItems.unshift($page.params.id);
+					localStorage.setItem('recentItem', JSON.stringify(recentItems));
+				}
+			} else if (recentFlag) {
+				let index = recentItems.indexOf($page.params.id);
+				console.log(recentItems);
+				console.log(index);
+				recentItems.splice(index, 1);
+				recentItems.unshift($page.params.id);
+				localStorage.setItem('recentItem', JSON.stringify(recentItems));
+			}
+		}
 	});
 
 	onDestroy(async () => {
 		$modal = null;
+		recentFlag = false;
 	});
 
 	async function handleLike() {
@@ -81,124 +124,125 @@ import StarRating from 'svelte-star-rating';
 	function handleOptionSelect() {
 		optionValue = selected;
 		let optionFlag = false;
-		for(let i=0; i<selectedItems.length; i++){
-			if(selectedItems[i].option ===optionValue){
+		for (let i = 0; i < selectedItems.length; i++) {
+			if (selectedItems[i].option === optionValue) {
 				optionFlag = true;
 			}
 		}
-		let optionID ;
-		if(optionFlag === false){
-			for(let i=0; i<options.length; i++){
-				if(selected === options[i].option){
+		let optionID;
+		if (optionFlag === false) {
+			for (let i = 0; i < options.length; i++) {
+				if (selected === options[i].option) {
 					optionID = options[i].id;
 				}
 			}
 			selected = null;
-		selectedItems.push({itemID : itemID, optionID : optionID, price : itemPrice, option: optionValue, quantity: 1 });
-		selectedItems = selectedItems;
-		totalPrice = totalPrice + itemPrice;
-		}
-		else{
+			selectedItems.push({
+				itemID: itemID,
+				optionID: optionID,
+				price: itemPrice,
+				option: optionValue,
+				quantity: 1
+			});
+			selectedItems = selectedItems;
+			totalPrice = totalPrice + itemPrice;
+		} else {
 			$modal = {
-			title: '이미 선택된 옵션입니다.',
-			message: '',
-			buttons: [
-				
-				{
-					title: '확인',
-					onClick: () => {
-						$modal = null;
+				title: '이미 선택된 옵션입니다.',
+				message: '',
+				buttons: [
+					{
+						title: '확인',
+						onClick: () => {
+							$modal = null;
+						}
 					}
-				}
-			]
-		};
+				]
+			};
 		}
 	}
-	function handleAmountPlus(index){
-		
+	function handleAmountPlus(index) {
 		selectedItems[index].quantity = selectedItems[index].quantity + 1;
 		totalPrice = totalPrice + itemPrice;
 	}
 
-	function handleAmountMinus(index){
-		if(selectedItems[index].quantity === 1){
+	function handleAmountMinus(index) {
+		if (selectedItems[index].quantity === 1) {
 			$modal = {
-			title: '더이상 줄일 수 없습니다.',
-			message: '',
-			buttons: [
-				
-				{
-					title: '확인',
-					onClick: () => {
-						$modal = null;
+				title: '더이상 줄일 수 없습니다.',
+				message: '',
+				buttons: [
+					{
+						title: '확인',
+						onClick: () => {
+							$modal = null;
+						}
 					}
-				}
-			]
-		};
-		}
-		else{
+				]
+			};
+		} else {
 			selectedItems[index].quantity = selectedItems[index].quantity - 1;
-		totalPrice = totalPrice - itemPrice;
+			totalPrice = totalPrice - itemPrice;
 		}
 	}
-	function handleItemDelete(index){
-		totalPrice = totalPrice - (selectedItems[index].quantity * itemPrice);
-		let tempArray = selectedItems.splice(index,1);
+	function handleItemDelete(index) {
+		totalPrice = totalPrice - selectedItems[index].quantity * itemPrice;
+		let tempArray = selectedItems.splice(index, 1);
 		selectedItems = selectedItems;
 	}
 
 	async function handleCartClick() {
-		if(selectedItems.length === 0){
+		if (selectedItems.length === 0) {
 			$modal = {
-			title: '상품을 선택해주세요.',
-			message: '',
-			buttons: [
-				{
-					title: '확인',
-					onClick: () => {
-						$modal = null;
+				title: '상품을 선택해주세요.',
+				message: '',
+				buttons: [
+					{
+						title: '확인',
+						onClick: () => {
+							$modal = null;
+						}
 					}
-				}
-			]
-		};
-		}
-		else{
-			try{
-				const {data} = await axios.post('/apis/cart',{selectedItems,session : supabase.auth.session()});
+				]
+			};
+		} else {
+			try {
+				const { data } = await axios.post('/apis/cart', {
+					selectedItems,
+					session: supabase.auth.session()
+				});
 				$modal = {
-			title: '장바구니에 추가되었습니다.' +
-			 '장바구니로 이동하시겠습니까?',
-			message: '',
-			buttons: [
-				{
-					title: '이동하기',
-					message: 'logout',
-					onClick: async () => {
-						goto('/orders/cart');
-					}
-				},
-				{
-					title: '쇼핑 계속하기',
-					onClick: () => {
-						$modal = null;
-					}
-				}
-			]
-		};
-			}catch(error){
-				$toastMessage = "장바구니에 추가하던 중 오류가 발생했습니다.";
+					title: '장바구니에 추가되었습니다.' + '장바구니로 이동하시겠습니까?',
+					message: '',
+					buttons: [
+						{
+							title: '이동하기',
+							message: 'logout',
+							onClick: async () => {
+								goto('/orders/cart');
+							}
+						},
+						{
+							title: '쇼핑 계속하기',
+							onClick: () => {
+								$modal = null;
+							}
+						}
+					]
+				};
+			} catch (error) {
+				$toastMessage = '장바구니에 추가하던 중 오류가 발생했습니다.';
 				console.log(error);
 			}
 		}
 	}
 
 	async function handleBuyClick() {
-		if(selectedItems.length === 0) {
+		if (selectedItems.length === 0) {
 			$toastMessage = '상품을 선택해주세요';
-		}
-		else{
+		} else {
 			$itemData = selectedItems;
-			goto("/orders/payment");
+			goto('/orders/payment');
 		}
 	}
 </script>
@@ -281,24 +325,24 @@ import StarRating from 'svelte-star-rating';
 	{#if reviewCount === 0}
 		<div class="text-center text-gray-500">작성된 리뷰가 없습니다.</div>
 	{:else}
-	{#each reviewData as review}
-	<div class="rounded bg-gray-100 p-4 mt-2">
-		<div class="flex items-center gap-2 text-sm">
-			<span class="font-bold">{review.user.name}</span>
-			<div class="pt-2"><StarRating rating = {review.star} config = {{size:16}}/></div>
-			<span class="flex-1 text-right text-gray-400 ">{getTimeDiff(review.created_at)}</span>
-		</div>
-		<div class="text-sm mt-2">
-			{review.body}
-		</div>
-	</div>
-	{/each}
+		{#each reviewData as review}
+			<div class="rounded bg-gray-100 p-4 mt-2">
+				<div class="flex items-center gap-2 text-sm">
+					<span class="font-bold">{review.user.name}</span>
+					<div class="pt-2"><StarRating rating={review.star} config={{ size: 16 }} /></div>
+					<span class="flex-1 text-right text-gray-400 ">{getTimeDiff(review.created_at)}</span>
+				</div>
+				<div class="text-sm mt-2">
+					{review.body}
+				</div>
+			</div>
+		{/each}
 	{/if}
 </div>
 <div class="pb-20" />
 
 {#if buyFlag == true}
-	<div class="pt-40"></div>
+	<div class="pt-40" />
 	<div class="fixed sm:mx-auto sm:max-w-sm bottom-0 bg-white   left-0 right-0">
 		<button
 			on:click={() => {
@@ -323,42 +367,61 @@ import StarRating from 'svelte-star-rating';
 			</select>
 		</div>
 
-			<div class="bg-gray-100 p-2">
-				{#if selectedItems.length > 0}
+		<div class="bg-gray-100 p-2">
+			{#if selectedItems.length > 0}
 				<div class="bg-white p-2">
 					{#each selectedItems as selectedItem, index}
-					<div class="pb-2">
-						<div class=" flex justify-between text-sm items-center">
-							<div class="text-gray-500 w-12">{selectedItem.option}</div>
-							<div class="flex items-center ">
-								<button on:click={()=>{handleAmountMinus(index)}} class = "w-8 h-8 bg-gray-200 flex justify-center items-center"><Icon icon = "minus"/></button>
-								<div class="font-bold w-8 h-8 flex items-center justify-center">{selectedItem.quantity}</div>
-								<button on:click={()=>{handleAmountPlus(index)}} class = "w-8 h-8 bg-gray-200 flex justify-center items-center"><Icon icon = "plus"/></button>
-							</div>
-							<div class="flex items-center gap-2">
-								<div class="font-bold">{addComma(selectedItem.quantity * (itemPrice * 1))}원</div>
-								<button on:click = {() => {handleItemDelete(index)}}><Icon icon="x" /></button>
-								
+						<div class="pb-2">
+							<div class=" flex justify-between text-sm items-center">
+								<div class="text-gray-500 w-12">{selectedItem.option}</div>
+								<div class="flex items-center ">
+									<button
+										on:click={() => {
+											handleAmountMinus(index);
+										}}
+										class="w-8 h-8 bg-gray-200 flex justify-center items-center"
+										><Icon icon="minus" /></button
+									>
+									<div class="font-bold w-8 h-8 flex items-center justify-center">
+										{selectedItem.quantity}
+									</div>
+									<button
+										on:click={() => {
+											handleAmountPlus(index);
+										}}
+										class="w-8 h-8 bg-gray-200 flex justify-center items-center"
+										><Icon icon="plus" /></button
+									>
+								</div>
+								<div class="flex items-center gap-2">
+									<div class="font-bold">{addComma(selectedItem.quantity * (itemPrice * 1))}원</div>
+									<button
+										on:click={() => {
+											handleItemDelete(index);
+										}}><Icon icon="x" /></button
+									>
+								</div>
 							</div>
 						</div>
-					</div>
 					{/each}
 				</div>
-				{/if}
-				<div class="flex justify-between text-lg font-bold p-2">
-					<div class="">상품 {selectedItems.length}개</div>
-					<div class="">{addComma(totalPrice)}원</div>
-				</div>
+			{/if}
+			<div class="flex justify-between text-lg font-bold p-2">
+				<div class="">상품 {selectedItems.length}개</div>
+				<div class="">{addComma(totalPrice)}원</div>
 			</div>
-		
+		</div>
 
 		<div class="flex gap-2 p-2">
-			<button on:click = {handleCartClick}
-			  class="w-full h-12 border rounded-full border-blue-700 text-sm text-blue-700">
+			<button
+				on:click={handleCartClick}
+				class="w-full h-12 border rounded-full border-blue-700 text-sm text-blue-700"
+			>
 				장바구니 담기
 			</button>
 
-			<button on:click = {handleBuyClick}
+			<button
+				on:click={handleBuyClick}
 				class="block text-center w-full bg-blue-500 rounded-full  h-12 text-sm text-white font-bold flex items-center justify-center"
 			>
 				바로구매

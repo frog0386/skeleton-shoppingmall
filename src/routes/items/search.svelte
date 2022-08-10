@@ -5,6 +5,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
+	import {isEmpty}	from '$lib/util';
 	let searchInput;
 	let searchArr = [];
 	onMount(async () => {
@@ -16,25 +17,12 @@
 		}
 	});
 
-	function isEmpty(value) {
-		if (
-			value == '' ||
-			value == null ||
-			value == undefined ||
-			(value != null && typeof value == 'object' && !Object.keys(value).length)
-		) {
-			return true;
-		} else {
-			return false;
-		}
-	}
 
 	function searchWordClick(index){
 		let searchWord = searchArr[index];
 		let temp = searchArr.splice(index,1);
 		searchArr.unshift(searchWord);
 		localStorage.setItem('search', JSON.stringify(searchArr));
-		console.log(searchArr);
 		$page.url.searchParams.set('keyword', searchWord);
 		goto(`/items/searchresults?${$page.url.searchParams.toString()}`);
 	}
@@ -51,7 +39,7 @@
 	<div class="flex flex-1 justify-center pr-8 font-bold text-base text-gray-800">상품 검색</div>
 </div>
 
-<div class="px-4 mt-2 border">
+<div class="px-4 mt-2">
 	<form
 		on:submit|preventDefault={async () => {
 			searchArr.unshift(searchInput);
