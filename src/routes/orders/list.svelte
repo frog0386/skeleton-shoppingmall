@@ -14,12 +14,13 @@
     $loading = true;
 		let order = await supabase
 			.from('order')
-			.select('*,line_item(*)')
+			.select('*,line_item(*,item(*,brand(*)),option(*))')
 			.eq('user_id', $user.id)
 			.eq('status', 'paid')
       .order('created_at', { ascending: false });
 		orderList = order.body;
-		for (let i = 0; i < orderList.length; i++) {
+		console.log(orderList);
+		/*for (let i = 0; i < orderList.length; i++) {
 			for (let j = 0; j < orderList[i].line_item.length; j++) {
 				let itemInfo = await supabase
 					.from('item')
@@ -35,7 +36,7 @@
 				orderList[i].line_item[j].option = optionInfo.body[0].option;
 			}
 		}
-    console.log(orderList);
+    console.log(orderList);*/
 		loadFlag = true;
     $loading = false;
 	});
@@ -61,18 +62,18 @@
 			{#each order.line_item as item}
 				<a href = "/items/{item.item_id}/detail" class="flex gap-2 p-4 border-b">
 					<img
-						src={item.image}
+						src={item.item.image}
 						class="flex items-end overflow-hidden w-24 h-24 border rounded bg-white"
 					/>
 					<div class="flex flex-col">
 						<div class="flex justify-between">
 							<div class="flex flex-col mt-2">
-								<div class="mb-1 text-xs text-neutral-500">{item.brand}</div>
+								<div class="mb-1 text-xs text-neutral-500">{item.item.brand.brandname}</div>
 								<div class="w-48 text-sm font-bold">
-									{item.itemname}
+									{item.item.name}
 								</div>
 								<div class="text-xs text-gray-500 mt-1">
-									옵션 : {item.option} 수량 : {item.quantity}
+									옵션 : {item.option.option} 수량 : {item.quantity}
 								</div>
 								<div class="mt-1 font-semibold">{addComma(item.price)}원</div>
 							</div>
