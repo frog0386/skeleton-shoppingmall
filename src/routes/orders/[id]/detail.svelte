@@ -12,15 +12,26 @@
   let orderTime = '';
   let items = [];
   let options = [];
-  let address = [];
+  let name = '';
+  let phone = '';
+  let address1 = '';
+  let address2 = '';
   let normalPriceSum = 0; 
   let saleSum = 0;
   let paidSum = 0;
+  let orderFlag = false;
   onMount(async () => {
     orderId = $page.params.id;
-    let data = await supabase.from('order').select('*,line_item(*)').eq('id', orderId);
+    let data = await supabase.from('order').select('*,line_item(*,item(*,brand(*)),option(*)),user_address(*)').eq('id', orderId);
     orderInfo = data.body[0];
+    console.log(orderInfo);
     orderTime = dateFormat(orderInfo.created_at);
+    name = orderInfo.user_address.name;
+    phone = orderInfo.user_address.phone;
+    address1 = orderInfo.user_address.address1;
+    address2 = orderInfo.user_address.address2;
+    orderFlag = true;
+    /*
     for(let i=0; i<orderInfo.line_item.length; i++){
       let itemData = await supabase.from('item').select('*,brand(*)').eq('id',orderInfo.line_item[i].item_id);
       items[i] = itemData.body[0];
@@ -29,15 +40,12 @@
     }
     let addressData = await supabase.from('user_address').select('*').eq('id',orderInfo.address_id);
     address = addressData.body[0];
+    */
     for(let i=0; i<orderInfo.line_item.length; i++){
-      normalPriceSum += orderInfo.line_item[i].quantity * items[i].normal_price;
-      saleSum += orderInfo.line_item[i].quantity * (items[i].normal_price - items[i].price);
+      normalPriceSum += orderInfo.line_item[i].quantity * orderInfo.line_item[i].item.normal_price;
+      saleSum += orderInfo.line_item[i].quantity * (orderInfo.line_item[i].item.normal_price - orderInfo.line_item[i].item.price);
     }
     paidSum = normalPriceSum - saleSum;
-    console.log(address);
-    console.log(items);
-    console.log(options);
-    console.log(orderInfo);
   })
 
 </script>
@@ -55,21 +63,21 @@
   <div class="">주문일시 : {orderTime}</div>
 </div>
 
-{#if options.length === items.length}
-{#each items as item, index}
+{#if orderFlag === true}
+{#each orderInfo.line_item as item, index}
 <div class="flex gap-2 p-4 border-b">
-  <img src = {item.image}
+  <img src = {item.item.image}
     class="flex items-end overflow-hidden w-24 h-24 border rounded bg-white"
   />
   <div class="flex flex-col">
     <div class="flex gap-2 justify-between">
       <div class="flex flex-col mt-2">
-        <div class="mb-1 text-xs text-neutral-500">{item.brand.brandname}</div>
+        <div class="mb-1 text-xs text-neutral-500">{item.item.brand.brandname}</div>
         <div class="w-48 text-sm truncate">
-          {item.name}
+          {item.item.name}
         </div>
-        <div class="text-xs text-gray-400">옵션 : {options[index].option}, 수량 : {orderInfo.line_item[index].quantity}</div>
-        <div class=" font-semibold">{addComma(item.price)}원</div>
+        <div class="text-xs text-gray-400">옵션 : {item.option.option}, 수량 : {item.quantity}</div>
+        <div class=" font-semibold">{addComma(item.item.price)}원</div>
       </div>
     </div>
   </div>
@@ -77,23 +85,22 @@
 {/each}
 {/if}
 
-{#if address.length !==0}
+
 <div class="space-y-2 p-4 space-y-4 border-b">
   <div class="font-bold ">배송지 정보</div>
   <div class="flex justify-between ">
     <div class="text-gray-500 text-sm">수령인</div>
-    <div class="">{address.name}</div>
+    <div class="">{name}</div>
   </div>
   <div class="flex justify-between">
     <div class="text-gray-500 text-sm">연락처</div>
-    <div class="">{address.phone}</div>
+    <div class="">{phone}</div>
   </div>
   <div class="flex justify-between">
     <div class="text-gray-500 text-sm">배송지</div>
-    <div class="">{address.address1}&nbsp{address.address2}</div>
+    <div class="">{address1}&nbsp{address2}</div>
   </div>
 </div>
-{/if}
 
 <div class="space-y-2 p-4 space-y-4 border-b">
   <div class="font-bold ">결제 정보</div>
