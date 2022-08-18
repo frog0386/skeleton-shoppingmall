@@ -10,7 +10,6 @@
 	import axios from 'axios';
 	import { toastMessage } from '$lib/stores';
 
-	let cartId;
 	let cartItems = [];
 	let normalPriceSum = 0;
 	let priceSum = 0;
@@ -18,20 +17,12 @@
 	let checkboxValue = [];
 	let temp = [];
 	onMount(async () => {
-		let data = await supabase.from('order').select().eq('user_id', $user.id).eq('status', 'cart');
-		cartId = data.body[0].id;
-		let cartItemData = await supabase
-			.from('line_item')
-			.select('*,item(*),order(*),option(*)')
-			.eq('order_id', cartId);
-		cartItems = cartItemData.body;
-		for (let i = 0; i < cartItems.length; i++) {
-			let cartItemData = await supabase
-				.from('item')
-				.select('*,brand(*)')
-				.eq('id', cartItems[i].item_id);
-			cartItems[i].brand = cartItemData.body[0].brand.brandname;
-		}
+		let data = await supabase
+			.from('order')
+			.select('*,line_item(*,item(*,brand(*)),option(*))')
+			.eq('user_id', $user.id)
+			.eq('status', 'cart');
+		cartItems = data.body[0].line_item;
 		for (let i = 0; i < cartItems.length; i++) {
 			checkboxValue.push(i);
 		}
@@ -158,7 +149,7 @@
 </div>
 <div class="pt-16" />
 
-{#each cartItems as cart, index}
+{#each cartItems as item, index}
 	<div class="p-4 flex justify-between items-start border-b">
 		<div class="text-sm flex gap-2">
 			<input
@@ -171,17 +162,17 @@
 				}}
 			/>
 			<div class="">
-				<div class="text-xs text-gray-400">{cart.brand}</div>
+				<div class="text-xs text-gray-400">{item.item.brand.brandname}</div>
 				<div class="font-bold">
-					{cart.item.name}
-					<div class="text-xs text-gray-400 mt-1">옵션 : {cart.option.option}</div>
+					{item.item.name}
+					<div class="text-xs text-gray-400 mt-1">옵션 : {item.option.option}</div>
 					<div class="flex mt-2 gap-4">
-						<img class="rounded w-24 object-cover" src={cart.item.image} />
+						<img class="rounded w-24 object-cover" src={item.item.image} />
 						<div>
 							<div class="flex gap-2 items-center">
-								<div class="font-bold text-lg">{addComma(cart.item.price)}원</div>
+								<div class="font-bold text-lg">{addComma(item.item.price)}원</div>
 								<div class="font-bold line-through text-gray-400">
-									{addComma(cart.item.normal_price)}원
+									{addComma(item.item.normal_price)}원
 								</div>
 							</div>
 							<div class="flex w-24 h-10 border rounded text-sm text-gray-500 mt-2">
@@ -196,7 +187,7 @@
 								<input
 									type="text"
 									class="border-none w-6 h-9 p-0 text-center"
-									value={cart.quantity}
+									value={item.quantity}
 								/>
 								<button
 									on:click={() => {

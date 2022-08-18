@@ -30,12 +30,17 @@
 	let address2 = '';
 	let request = '';
 	onMount(async () => {
-		let addressData = await supabase.from('user_address').select().eq('user_id', $user.id).eq('status','active');
+		let addressData = await supabase
+			.from('user_address')
+			.select()
+			.eq('user_id', $user.id)
+			.eq('status', 'active');
 		addressList = addressData.body;
 		addressOption = addressList[0];
 
 		if ($itemData) {
 			itemList = $itemData;
+			console.log(itemList);
 			for (let i = 0; i < itemList.length; i++) {
 				option[i] = itemList[i].option;
 				quantity[i] = itemList[i].quantity;
@@ -43,6 +48,7 @@
 					.from('item')
 					.select('*,brand(*),option(*)')
 					.eq('id', itemList[i].itemID);
+				console.log(data.body[0]);
 				items.push(data.body[0]);
 				items[i].option = option[i];
 				items[i].quantity = quantity[i];
@@ -51,10 +57,11 @@
 					.select('id')
 					.eq('option', items[i].option)
 					.eq('item_id', items[i].id);
+				console.log(optionIdValue.body[0]);
 				items[i].optionId = optionIdValue.body[0].id;
-				sailPriceSum = countSailSum_item();
-				normalPriceSum = countNormalPriceSum_item();
 			}
+			sailPriceSum = countSailSum_item();
+			normalPriceSum = countNormalPriceSum_item();
 			items = items;
 		} else if ($cartData) {
 			console.log($cartData);
@@ -101,38 +108,36 @@
 		return priceSum;
 	}
 	async function handlePayClick() {
-		if(!addressOption){
-			$toastMessage = "배송지를 지정해주세요."
-		}
-		else{
+		if (!addressOption) {
+			$toastMessage = '배송지를 지정해주세요.';
+		} else {
 			addressOption.request = request;
 			if ($itemData) {
-			let response = await axios.post('/apis/pay', {
-				data: {items,addressOption},
-				session: supabase.auth.session(),
-				flag: 0
-			});
-			if (response.status === 200) {
-				$toastMessage = '결제가 완료되었습니다.';
-				goto('/orders/success');
-			} else {
-				$toastMessage = '오류가 발생했습니다.';
-			}
-		} else if ($cartData) {
-			let response = await axios.post('/apis/pay', {
-				data: {cartList,addressOption},
-				session: supabase.auth.session(),
-				flag: 1
-			});
-			if (response.status === 200) {
-				$toastMessage = '결제가 완료되었습니다.';
-				goto('/orders/success');
-			} else {
-				$toastMessage = '오류가 발생했습니다.';
+				let response = await axios.post('/apis/pay', {
+					data: { items, addressOption },
+					session: supabase.auth.session(),
+					flag: 0
+				});
+				if (response.status === 200) {
+					$toastMessage = '결제가 완료되었습니다.';
+					goto('/orders/success');
+				} else {
+					$toastMessage = '오류가 발생했습니다.';
+				}
+			} else if ($cartData) {
+				let response = await axios.post('/apis/pay', {
+					data: { cartList, addressOption },
+					session: supabase.auth.session(),
+					flag: 1
+				});
+				if (response.status === 200) {
+					$toastMessage = '결제가 완료되었습니다.';
+					goto('/orders/success');
+				} else {
+					$toastMessage = '오류가 발생했습니다.';
+				}
 			}
 		}
-		}
-
 	}
 
 	const handleComplete = ({ detail: { data } }) => {
@@ -142,18 +147,27 @@
 		addressSearchFlag = false;
 	};
 
-	async function saveAddress(){
-		const {data} = await supabase.from('user_address').insert({name : name, address_name : addressName, zipcode : zipcode, address1 : address1, address2 : address2, phone : phone, user_id : $user.id, status : "active"});
-		let id = data[0].id
+	async function saveAddress() {
+		const { data } = await supabase.from('user_address').insert({
+			name: name,
+			address_name: addressName,
+			zipcode: zipcode,
+			address1: address1,
+			address2: address2,
+			phone: phone,
+			user_id: $user.id,
+			status: 'active'
+		});
+		let id = data[0].id;
 		addressList.push({
-      address1: address1,
-      address2: address2,
-      phone: phone,
-      zipcode: zipcode,
-      name: name,
-      address_name: addressName,
-			id : id
-    });
+			address1: address1,
+			address2: address2,
+			phone: phone,
+			zipcode: zipcode,
+			name: name,
+			address_name: addressName,
+			id: id
+		});
 		addressList = addressList;
 		addressEditFlag = false;
 		name = '';
@@ -163,15 +177,14 @@
 		address2 = '';
 		phone = '';
 	}
-	async function handleDelete(){
-		await supabase.from('user_address').update({status : "inactive"}).eq('id',addressOption.id);
+	async function handleDelete() {
+		await supabase.from('user_address').update({ status: 'inactive' }).eq('id', addressOption.id);
 		let index = addressList.indexOf(addressOption);
-		let temp = addressList.splice(index,1);
+		let temp = addressList.splice(index, 1);
 		addressList = addressList;
 		addressOption = null;
 	}
-	function handleAddressUseClick(){
-
+	function handleAddressUseClick() {
 		addressFlag = false;
 	}
 </script>
@@ -179,7 +192,7 @@
 {#if addressFlag === true}
 	{#if addressEditFlag === true}
 		{#if addressSearchFlag === true}
-		<div
+			<div
 				class="fixed top-0 sm:mx-auto sm:max-w-sm left-0 right-0 bg-white h-14 justify-center items-center border-b flex"
 			>
 				<button
@@ -192,7 +205,7 @@
 				</button>
 				<div class="flex w-full justify-center  font-bold text-base text-gray-800">주소 검색</div>
 			</div>
-			<div class="pt-16"> </div>
+			<div class="pt-16" />
 			<DaumPostcode on:complete={handleComplete} autoClose="true" />
 		{:else}
 			<div
@@ -208,7 +221,12 @@
 				</button>
 				<div class="flex w-full justify-center  font-bold text-base text-gray-800">배송지 추가</div>
 			</div>
-			<form class="space-y-2 p-4" on:submit|preventDefault={async () => {saveAddress();}}>
+			<form
+				class="space-y-2 p-4"
+				on:submit|preventDefault={async () => {
+					saveAddress();
+				}}
+			>
 				<div class="pt-12" />
 				<label for="" class=" mt-4  font-bold block text-gray-500 mb-2">배송지명</label>
 				<input
@@ -321,7 +339,7 @@
 		{#if addressOption}
 			<div class="p-4 border-b flex justify-between">
 				<div class="font-bold">{addressOption.address_name}</div>
-				<button on:click = {handleDelete} class="text-red-500 underline text-sm">삭제하기</button>
+				<button on:click={handleDelete} class="text-red-500 underline text-sm">삭제하기</button>
 			</div>
 			<div class="px-4 space-y-2 border-b py-6">
 				<div class="flex gap-6">
@@ -341,8 +359,12 @@
 					<div class="flex-1">{addressOption.address1}&nbsp{addressOption.address2}</div>
 				</div>
 			</div>
-			<div class="p-4"><button on:click = {handleAddressUseClick} class="w-full bg-blue-500 h-12 rounded-full text-white hover:bg-gray-200">사용하기</button></div>
-			
+			<div class="p-4">
+				<button
+					on:click={handleAddressUseClick}
+					class="w-full bg-blue-500 h-12 rounded-full text-white hover:bg-gray-200">사용하기</button
+				>
+			</div>
 		{/if}
 	{/if}
 {:else if addressFlag === false}
@@ -388,7 +410,7 @@
 			</div>
 
 			<input
-			bind:value = {request}
+				bind:value={request}
 				type="text"
 				class="w-full h-10 border-gray-300 rounded text-sm placeholder-neutral-400"
 				placeholder="배송 시 요청사항을 적어주세요"
