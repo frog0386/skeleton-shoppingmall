@@ -4,8 +4,9 @@
 	import { fade } from 'svelte/transition';
 
 	onMount(() => {
+		sessionStorage.setItem('sessionFlag', '1');
 		setTimeout(() => {
-			goto('/users/login');
+			goto('/');
 		}, 3000);
 	});
 </script>

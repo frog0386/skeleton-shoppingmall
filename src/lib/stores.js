@@ -7,3 +7,5 @@ export const toastMessage = writable(null);
 export const loading = writable(false);
 export const itemData = writable(null);
 export const cartData = writable([]);
+export const rankData = writable([]);
+export const indexItemData = writable([]);

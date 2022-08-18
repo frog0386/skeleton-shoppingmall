@@ -4,6 +4,7 @@
 	import { onMount } from 'svelte';
 	import { supabase } from '$lib/supabase';
 	import { addComma, isEmpty } from '$lib/util';
+	import { goto } from '$app/navigation';
 
 	let categories = [];
 	let items = [];
@@ -14,6 +15,12 @@
 	let recentItemsInfo = [];
 	let rankFlag = false;
 	onMount(async () => {
+		/*let sessionFlag = sessionStorage.getItem('sessionFlag');
+		console.log(sessionFlag);
+		if (sessionFlag !== '1') {
+			goto('/splash');
+		}*/
+
 		let rankData = await supabase.rpc('get_item_rank');
 		console.log(rankData);
 
